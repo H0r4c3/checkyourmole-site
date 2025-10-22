@@ -6,7 +6,7 @@
  */
 
 // IMPORTANT: Update this with your actual Hugging Face Space URL
-const API_URL = 'https://YOUR_USERNAME-checkyourmole.hf.space/analyze';
+const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
 
 /**
  * Upload and analyze image
@@ -219,4 +219,5 @@ document.addEventListener('DOMContentLoaded', async () => {
  * });
  * 
  * // The analyze button will call handleAnalyzeClick() which uses analyzeImage()
+
  */
