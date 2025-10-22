@@ -1,529 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CheckYourMole - AI Mole Classification Demo</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: #333;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Header */
-        header {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            text-align: center;
-        }
-
-        h1 {
-            font-size: 2.5em;
-            color: #667eea;
-            margin-bottom: 10px;
-            font-weight: 700;
-        }
-
-        .tagline {
-            font-size: 1.2em;
-            color: #666;
-            margin-bottom: 20px;
-        }
-
-        .disclaimer {
-            background: #fff3cd;
-            border: 2px solid #ffc107;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 20px;
-            display: inline-block;
-        }
-
-        .disclaimer strong {
-            color: #856404;
-            font-size: 1.1em;
-        }
-
-        /* Main Section */
-        .main-section {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        .upload-container {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .upload-box {
-            border: 3px dashed #667eea;
-            border-radius: 15px;
-            padding: 60px 40px;
-            background: #f8f9ff;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-        }
-
-        .upload-box:hover {
-            background: #eff1ff;
-            border-color: #764ba2;
-        }
-
-        .upload-box.dragover {
-            background: #e0e7ff;
-            border-color: #4f46e5;
-            transform: scale(1.02);
-        }
-
-        .upload-icon {
-            font-size: 4em;
-            margin-bottom: 20px;
-        }
-
-        .upload-text {
-            font-size: 1.2em;
-            color: #667eea;
-            margin-bottom: 10px;
-        }
-
-        .upload-subtext {
-            color: #999;
-            font-size: 0.9em;
-        }
-
-        #fileInput {
-            display: none;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.1em;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
-        }
-
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
-        }
-
-        .btn:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        /* Preview Area */
-        .preview-container {
-            display: none;
-            margin: 30px 0;
-        }
-
-        .preview-container.active {
-            display: block;
-        }
-
-        .image-preview {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-            margin: 20px auto;
-            display: block;
-        }
-
-        /* Results Section */
-        .results-section {
-            background: white;
-            border-radius: 15px;
-            padding: 40px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-            display: none;
-        }
-
-        .results-section.active {
-            display: block;
-        }
-
-        .results-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .result-card {
-            background: #f8f9ff;
-            border-radius: 10px;
-            padding: 25px;
-            text-align: center;
-        }
-
-        .result-card h3 {
-            color: #667eea;
-            margin-bottom: 15px;
-            font-size: 1.3em;
-        }
-
-        .prediction-value {
-            font-size: 3em;
-            font-weight: 700;
-            margin: 20px 0;
-        }
-
-        .prediction-value.benign {
-            color: #28a745;
-        }
-
-        .prediction-value.malignant {
-            color: #dc3545;
-        }
-
-        .gradcam-image {
-            max-width: 100%;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-
-        /* Loading Spinner */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .loading.active {
-            display: block;
-        }
-
-        .spinner {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #667eea;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Footer */
-        footer {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            margin-top: 30px;
-            text-align: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
-        }
-
-        .footer-content {
-            color: #666;
-            line-height: 1.8;
-        }
-
-        .footer-links {
-            margin: 20px 0;
-        }
-
-        .footer-links a {
-            color: #667eea;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: 600;
-            transition: color 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: #764ba2;
-        }
-
-        .footer-disclaimer {
-            font-size: 0.9em;
-            color: #999;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2em;
-            }
-
-            .results-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .upload-box {
-                padding: 40px 20px;
-            }
-
-            .main-section, header, footer {
-                padding: 25px;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CheckYourMole — AI Mole Classification Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header>
-            <h1>🔬 CheckYourMole</h1>
-            <p class="tagline">AI-Powered Mole Classification Demo</p>
-            <div class="disclaimer">
-                <strong>⚠️ Educational Use Only</strong><br>
-                This tool is for demonstration purposes and is NOT a medical diagnosis. Always consult a healthcare professional for skin concerns.
-            </div>
-        </header>
 
-        <!-- Main Upload Section -->
-        <div class="main-section">
-            <div class="upload-container">
-                <div class="upload-box" id="uploadBox">
-                    <div class="upload-icon">📤</div>
-                    <div class="upload-text">Drop your image here or click to browse</div>
-                    <div class="upload-subtext">Supports JPG, PNG formats</div>
-                </div>
-                <input type="file" id="fileInput" accept=".jpg,.jpeg,.png" />
-            </div>
+  <header>
+    <h1>CheckYourMole — AI Mole Classification Demo</h1>
+    <p class="tagline">Upload a mole image to see how AI analyzes it</p>
+    <div class="disclaimer-banner">⚠️ Educational only. Not a medical diagnosis.</div>
+  </header>
 
-            <div class="preview-container" id="previewContainer">
-                <h3 style="text-align: center; color: #667eea; margin-bottom: 20px;">Image Preview</h3>
-                <img id="imagePreview" class="image-preview" alt="Preview" />
-                <div style="text-align: center; margin-top: 20px;">
-                    <button class="btn" id="analyzeBtn" disabled>Analyze Image</button>
-                </div>
-            </div>
-
-            <div class="loading" id="loadingSpinner">
-                <div class="spinner"></div>
-                <p>Analyzing your image with AI...</p>
-            </div>
-        </div>
-
-        <!-- Results Section -->
-        <div class="results-section" id="resultsSection">
-            <h2 style="text-align: center; color: #667eea; margin-bottom: 30px;">Analysis Results</h2>
-            
-            <div class="results-grid">
-                <div class="result-card">
-                    <h3>Prediction</h3>
-                    <div class="prediction-value" id="predictionValue">--</div>
-                    <p id="predictionLabel" style="font-size: 1.2em; color: #666;">Classification Pending</p>
-                    <p style="margin-top: 15px; color: #999; font-size: 0.9em;">
-                        Confidence: <span id="confidenceValue" style="font-weight: 600;">--</span>
-                    </p>
-                </div>
-
-                <div class="result-card">
-                    <h3>Model Focus Visualization</h3>
-                    <img id="gradcamImage" class="gradcam-image" alt="Grad-CAM Heatmap" />
-                    <p style="margin-top: 15px; color: #666; font-size: 0.9em;">
-                        Areas where the AI focuses its attention
-                    </p>
-                </div>
-            </div>
-
-            <div style="text-align: center; margin-top: 30px;">
-                <button class="btn" onclick="location.reload()">Analyze Another Image</button>
-            </div>
-        </div>
-
-        <!-- Footer -->
-        <footer>
-            <div class="footer-content">
-                <p><strong>Created by Horatiu Crista</strong></p>
-                <p>Advanced AI Mole Classifier using EfficientNetV2 with Attention Supervision</p>
-                
-                <div class="footer-links">
-                    <a href="https://huggingface.co/YOUR_USERNAME" target="_blank">🤗 Hugging Face</a>
-                    <a href="https://linkedin.com/in/YOUR_PROFILE" target="_blank">💼 LinkedIn</a>
-                    <a href="https://github.com/YOUR_GITHUB" target="_blank">💻 GitHub</a>
-                </div>
-
-                <div class="footer-disclaimer">
-                    <p><strong>Medical Disclaimer:</strong> This AI tool is intended solely for educational and research purposes. It does not provide medical advice, diagnosis, or treatment. Skin lesions require professional evaluation by qualified dermatologists. If you have concerns about a mole or skin lesion, please consult a healthcare provider immediately.</p>
-                </div>
-            </div>
-        </footer>
+  <section class="upload-section">
+    <div class="upload-box">
+      <div class="image-box">
+        <h3>Original Image</h3>
+        <label for="file-upload" class="custom-file-upload">Choose Image</label>
+        <input id="file-upload" type="file" accept=".jpg,.jpeg,.png" />
+        <p class="caption">Tap to upload or drag & drop</p>
+      </div>
+      <div class="image-box">
+        <h3>Grad-CAM Heatmap</h3>
+        <img src="#" alt="Grad-CAM preview" class="preview-image" />
+        <p class="caption">Model focus visualization</p>
+      </div>
     </div>
+    <button class="analyze-button">Analyze Image</button>
+    <p class="explanation">
+      The AI model uses Grad-CAM to highlight areas of interest in the mole image. This helps visualize what the model is focusing on during classification.
+    </p>
+  </section>
 
-    <script>
-        // Elements
-        const uploadBox = document.getElementById('uploadBox');
-        const fileInput = document.getElementById('fileInput');
-        const previewContainer = document.getElementById('previewContainer');
-        const imagePreview = document.getElementById('imagePreview');
-        const analyzeBtn = document.getElementById('analyzeBtn');
-        const loadingSpinner = document.getElementById('loadingSpinner');
-        const resultsSection = document.getElementById('resultsSection');
-        const predictionValue = document.getElementById('predictionValue');
-        const predictionLabel = document.getElementById('predictionLabel');
-        const confidenceValue = document.getElementById('confidenceValue');
-        const gradcamImage = document.getElementById('gradcamImage');
+  <section class="results">
+    <h2>Diagnosis</h2>
+    <div class="diagnosis-box benign">
+      BENIGN
+      <div class="confidence">Confidence Level: 0.91</div>
+    </div>
+    <!-- Example for malignant:
+    <div class="diagnosis-box malignant">
+      MALIGNANT
+      <div class="confidence">Confidence Level: 0.82</div>
+    </div>
+    -->
+  </section>
 
-        // Hugging Face API Configuration
-        const HF_API_URL = 'https://api-inference.huggingface.co/models/YOUR_USERNAME/YOUR_MODEL_NAME';
-        const HF_API_TOKEN = 'YOUR_HUGGING_FACE_TOKEN'; // Replace with your token
+  <footer>
+    <p>Created by Horatiu Crista</p>
+    <p>
+      <a href="https://huggingface.co/horatiu-crista" target="_blank">🤗 Hugging Face</a> |
+      <a href="https://www.linkedin.com/in/horatiu-crista" target="_blank">💼 LinkedIn</a>
+    </p>
+    <p class="footer-disclaimer">
+      ⚠️ This AI tool is intended solely for educational and research purposes. It does not provide medical advice, diagnosis, or treatment.
+    </p>
+  </footer>
 
-        let uploadedFile = null;
-
-        // Upload box click handler
-        uploadBox.addEventListener('click', () => fileInput.click());
-
-        // Drag and drop handlers
-        uploadBox.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            uploadBox.classList.add('dragover');
-        });
-
-        uploadBox.addEventListener('dragleave', () => {
-            uploadBox.classList.remove('dragover');
-        });
-
-        uploadBox.addEventListener('drop', (e) => {
-            e.preventDefault();
-            uploadBox.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) {
-                handleFile(files[0]);
-            }
-        });
-
-        // File input change handler
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length > 0) {
-                handleFile(e.target.files[0]);
-            }
-        });
-
-        // Handle file upload
-        function handleFile(file) {
-            if (!file.type.match('image/(jpeg|jpg|png)')) {
-                alert('Please upload a JPG or PNG image');
-                return;
-            }
-
-            uploadedFile = file;
-            
-            // Show preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                imagePreview.src = e.target.result;
-                previewContainer.classList.add('active');
-                analyzeBtn.disabled = false;
-                resultsSection.classList.remove('active');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        // Analyze button handler
-        analyzeBtn.addEventListener('click', async () => {
-            if (!uploadedFile) return;
-
-            // Show loading
-            loadingSpinner.classList.add('active');
-            analyzeBtn.disabled = true;
-
-            try {
-                // Call Hugging Face API
-                const result = await analyzeImage(uploadedFile);
-                displayResults(result);
-            } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred during analysis. Please try again.');
-            } finally {
-                loadingSpinner.classList.remove('active');
-                analyzeBtn.disabled = false;
-            }
-        });
-
-        // Analyze image using Hugging Face API
-        async function analyzeImage(file) {
-            // TODO: Replace with actual Hugging Face API call
-            // This is a placeholder that simulates API response
-            
-            // Simulate API delay
-            await new Promise(resolve => setTimeout(resolve, 2000));
-            
-            // Simulated response (replace with actual API call)
-            return {
-                prediction: Math.random() > 0.5 ? 'benign' : 'malignant',
-                confidence: (Math.random() * 0.3 + 0.7).toFixed(2),
-                gradcam: imagePreview.src // In production, this would come from API
-            };
-
-            /* ACTUAL API CALL (uncomment when ready):
-            const formData = new FormData();
-            formData.append('file', file);
-
-            const response = await fetch(HF_API_URL, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${HF_API_TOKEN}`
-                },
-                body: formData
-            });
-
-            if (!response.ok) {
-                throw new Error('API request failed');
-            }
-
-            return await response.json();
-            */
-        }
-
-        // Display results
-        function displayResults(result) {
-            // Update prediction
-            const isMalignant = result.prediction === 'malignant';
-            predictionValue.textContent = `${(result.confidence * 100).toFixed(1)}%`;
-            predictionValue.className = `prediction-value ${result.prediction}`;
-            
-            predictionLabel.textContent = isMalignant ? 'Malignant' : 'Benign';
-            predictionLabel.style.color = isMalignant ? '#dc3545' : '#28a745';
-            
-            confidenceValue.textContent = `${(result.confidence * 100).toFixed(1)}%`;
-
-            // Update Grad-CAM (placeholder for now)
-            gradcamImage.src = result.gradcam || imagePreview.src;
-
-            // Show results
-            resultsSection.classList.add('active');
-            resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-    </script>
 </body>
 </html>
