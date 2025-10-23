@@ -46,10 +46,15 @@ async function analyzeImage(imageFile) {
  * Display analysis results
  */
 function displayResults(result) {
+  console.log('API Result:', result);
+  console.log('Preprocessed image exists?', !!result.preprocessed_image);
+  console.log('Grad-CAM exists?', !!result.gradcam_overlay);
+  
   const diagnosisLabel = document.getElementById('diagnosisLabel');
   const confidenceValue = document.getElementById('confidenceValue');
   const resultCard = document.getElementById('resultCard');
   const originalImage = document.getElementById('originalImage');
+  const originalPlaceholder = document.getElementById('originalPlaceholder');
   const gradcamImage = document.getElementById('gradcamImage');
   const gradcamPlaceholder = document.getElementById('gradcamPlaceholder');
 
@@ -63,15 +68,28 @@ function displayResults(result) {
 
   // Update original image with preprocessed version
   if (result.preprocessed_image) {
+    console.log('Updating original image with preprocessed version');
+    originalImage.onload = () => {
+      console.log('Preprocessed image loaded');
+      originalPlaceholder.style.display = 'none';
+    };
     originalImage.src = result.preprocessed_image;
+    originalImage.style.display = 'block';
+  } else {
+    console.warn('No preprocessed_image in API response!');
   }
 
   // Update Grad-CAM image and hide placeholder
-  gradcamImage.onload = () => {
-    gradcamPlaceholder.style.display = 'none';
-    gradcamImage.style.display = 'block';
-  };
-  gradcamImage.src = result.gradcam_overlay;
+  if (result.gradcam_overlay) {
+    gradcamImage.onload = () => {
+      console.log('Grad-CAM loaded');
+      gradcamPlaceholder.style.display = 'none';
+      gradcamImage.style.display = 'block';
+    };
+    gradcamImage.src = result.gradcam_overlay;
+  } else {
+    console.warn('No gradcam_overlay in API response!');
+  }
 
   // Scroll to results
   setTimeout(() => {
