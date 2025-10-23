@@ -3,7 +3,7 @@
  * Connects to Hugging Face Spaces Flask API
  */
 
-// Update with your actual Hugging Face Space URL
+
 const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
 
 /**
@@ -51,6 +51,7 @@ function displayResults(result) {
   const confidenceValue = document.getElementById('confidenceValue');
   const resultCard = document.getElementById('resultCard');
   const gradcamImage = document.getElementById('gradcamImage');
+  const gradcamPlaceholder = document.getElementById('gradcamPlaceholder');
 
   const isMalignant = result.prediction === 'malignant';
   const labelText = isMalignant ? 'Malignant' : 'Benign';
@@ -60,12 +61,15 @@ function displayResults(result) {
   confidenceValue.textContent = `Confidence: ${confidencePercent}%`;
   resultCard.className = `result-card ${isMalignant ? 'malignant' : 'benign'} active`;
 
-  // Update Grad-CAM image
+  // Update Grad-CAM image and hide placeholder
   gradcamImage.src = result.gradcam_overlay;
-  gradcamImage.classList.remove('placeholder');
+  gradcamImage.style.display = 'block';
+  gradcamPlaceholder.style.display = 'none';
 
   // Scroll to results
-  resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  setTimeout(() => {
+    resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 100);
 }
 
 /**
@@ -93,7 +97,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const analyzeBtn = document.getElementById('analyzeBtn');
   const fileInput = document.getElementById('file-upload');
   const originalImage = document.getElementById('originalImage');
+  const originalPlaceholder = document.getElementById('originalPlaceholder');
   const gradcamImage = document.getElementById('gradcamImage');
+  const gradcamPlaceholder = document.getElementById('gradcamPlaceholder');
   const resultCard = document.getElementById('resultCard');
 
   let selectedFile = null;
@@ -106,24 +112,31 @@ document.addEventListener('DOMContentLoaded', () => {
       // Validate file type
       if (!file.type.startsWith('image/')) {
         alert('Please select a valid image file');
+        fileInput.value = ''; // Clear the input
         return;
       }
 
       // Validate file size (max 10MB)
       if (file.size > 10 * 1024 * 1024) {
         alert('Image is too large. Please select an image under 10MB');
+        fileInput.value = ''; // Clear the input
         return;
       }
 
       selectedFile = file;
       
-      // Show preview
+      // Show original image preview and hide placeholder
       originalImage.src = URL.createObjectURL(file);
       originalImage.style.display = 'block';
+      originalPlaceholder.style.display = 'none';
       
-      // Reset Grad-CAM and results
+      // Reset Grad-CAM to placeholder state
       gradcamImage.src = '';
-      gradcamImage.classList.add('placeholder');
+      gradcamImage.style.display = 'none';
+      gradcamPlaceholder.style.display = 'flex';
+      gradcamPlaceholder.textContent = 'Awaiting analysis';
+      
+      // Hide previous results
       resultCard.classList.remove('active');
       
       // Enable analyze button
@@ -140,16 +153,11 @@ document.addEventListener('DOMContentLoaded', () => {
     await analyzeImage(selectedFile);
   });
 
-  // Handle Grad-CAM image load
-  gradcamImage.addEventListener('load', () => {
-    if (gradcamImage.src && gradcamImage.src !== '') {
-      gradcamImage.classList.remove('placeholder');
-      gradcamImage.style.display = 'block';
-    }
-  });
-
-  // Handle Grad-CAM image error
+  // Handle Grad-CAM image load error
   gradcamImage.addEventListener('error', () => {
     console.error('Failed to load Grad-CAM image');
+    gradcamPlaceholder.style.display = 'flex';
+    gradcamPlaceholder.textContent = 'Error loading heatmap';
+    gradcamImage.style.display = 'none';
   });
 });
