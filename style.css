@@ -44,6 +44,7 @@ header {
   border: 1px solid #ccc;
   padding: 1rem;
   background-color: #f9f9f9;
+  border-radius: 10px;
 }
 
 .custom-file-upload {
@@ -71,6 +72,7 @@ input[type="file"] {
   width: 100%;
   height: auto;
   margin-top: 1rem;
+  border-radius: 8px;
 }
 
 .analyze-button {
@@ -83,39 +85,88 @@ input[type="file"] {
   cursor: pointer;
 }
 
+.analyze-button:disabled {
+  background-color: #9ec5fe;
+  cursor: not-allowed;
+}
+
 .explanation {
   max-width: 600px;
   margin: 1rem auto;
   font-size: 0.95rem;
 }
 
-.results {
-  margin-top: 2rem;
+/* Spinner */
+.spinner {
+  display: none;
+  text-align: center;
+  margin: 1.5rem auto;
 }
 
-.diagnosis-box {
-  max-width: 400px;
-  margin: 1rem auto;
+.spinner.active {
+  display: block;
+}
+
+.spinner-circle {
+  margin: 0 auto 0.5rem;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #ddd;
+  border-top: 4px solid #007bff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Result card (IDs/classes expected by your JS) */
+.result-card {
+  display: none;
+  max-width: 320px;
+  margin: 2rem auto;
   padding: 1.5rem;
-  border-radius: 10px;
+  border-radius: 15px;
+  color: white;
   font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
 }
 
-.benign {
-  background: linear-gradient(to right, #a8e6cf, #dcedc1);
-  border: 2px solid #4caf50;
-  color: #2e7d32;
+.result-card.active {
+  display: block;
 }
 
-.malignant {
-  background: linear-gradient(to right, #ff8a80, #ff5252);
-  border: 2px solid #c62828;
-  color: #b71c1c;
+.result-card.benign,
+.diagnosis-result.benign {
+  background: linear-gradient(to bottom right, #4caf50, #81c784);
+  border: 3px solid #2e7d32;
 }
 
-.confidence {
+.result-card.malignant,
+.diagnosis-result.malignant {
+  background: linear-gradient(to bottom right, #e53935, #ef5350);
+  border: 3px solid #b71c1c;
+}
+
+/* These two classes are toggled by your JS */
+.diagnosis-result { /* container the JS targets */
+  /* we style it like the card for consistency */
+  display: block;
+  max-width: 320px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  border-radius: 15px;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+}
+
+.confidence-value {
   margin-top: 0.5rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  font-weight: 600;
 }
 
 footer {
@@ -149,8 +200,9 @@ footer a {
     width: 80%;
     font-size: 1.1rem;
   }
-  .diagnosis-box {
+  .result-card,
+  .diagnosis-result {
     width: 90%;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
   }
 }
