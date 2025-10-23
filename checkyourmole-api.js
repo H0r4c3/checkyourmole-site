@@ -3,7 +3,6 @@
  * Connects to Hugging Face Spaces Flask API
  */
 
-
 const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
 
 /**
@@ -62,9 +61,11 @@ function displayResults(result) {
   resultCard.className = `result-card ${isMalignant ? 'malignant' : 'benign'} active`;
 
   // Update Grad-CAM image and hide placeholder
+  gradcamImage.onload = () => {
+    gradcamPlaceholder.style.display = 'none';
+    gradcamImage.style.display = 'block';
+  };
   gradcamImage.src = result.gradcam_overlay;
-  gradcamImage.style.display = 'block';
-  gradcamPlaceholder.style.display = 'none';
 
   // Scroll to results
   setTimeout(() => {
@@ -108,40 +109,43 @@ document.addEventListener('DOMContentLoaded', () => {
   fileInput.addEventListener('change', (e) => {
     const file = e.target.files[0];
     
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file');
-        fileInput.value = ''; // Clear the input
-        return;
-      }
-
-      // Validate file size (max 10MB)
-      if (file.size > 10 * 1024 * 1024) {
-        alert('Image is too large. Please select an image under 10MB');
-        fileInput.value = ''; // Clear the input
-        return;
-      }
-
-      selectedFile = file;
-      
-      // Show original image preview and hide placeholder
-      originalImage.src = URL.createObjectURL(file);
-      originalImage.style.display = 'block';
-      originalPlaceholder.style.display = 'none';
-      
-      // Reset Grad-CAM to placeholder state
-      gradcamImage.src = '';
-      gradcamImage.style.display = 'none';
-      gradcamPlaceholder.style.display = 'flex';
-      gradcamPlaceholder.textContent = 'Awaiting analysis';
-      
-      // Hide previous results
-      resultCard.classList.remove('active');
-      
-      // Enable analyze button
-      analyzeBtn.disabled = false;
+    if (!file) return;
+    
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      alert('Please select a valid image file');
+      fileInput.value = ''; // Clear the input
+      return;
     }
+
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      alert('Image is too large. Please select an image under 10MB');
+      fileInput.value = ''; // Clear the input
+      return;
+    }
+
+    selectedFile = file;
+    
+    // Show original image preview and hide placeholder
+    const imageUrl = URL.createObjectURL(file);
+    originalImage.onload = () => {
+      originalPlaceholder.style.display = 'none';
+    };
+    originalImage.src = imageUrl;
+    originalImage.style.display = 'block';
+    
+    // Reset Grad-CAM to placeholder state
+    gradcamImage.src = '';
+    gradcamImage.style.display = 'none';
+    gradcamPlaceholder.style.display = 'flex';
+    gradcamPlaceholder.textContent = 'Awaiting analysis';
+    
+    // Hide previous results
+    resultCard.classList.remove('active');
+    
+    // Enable analyze button
+    analyzeBtn.disabled = false;
   });
 
   // Handle analyze button click
