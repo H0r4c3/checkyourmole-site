@@ -25,7 +25,7 @@ Once deployed, the site will be available at:
    - Provides upload form and displays results  
 
 2. **Backend (Hugging Face Space)**  
-   - Runs the private ML model  
+   - Runs the private ML model (Fine‑tuned EfficientNet on a dermoscopic lesion dataset)
    - Handles preprocessing, evaluation, and Grad-CAM visualization  
    - Returns results to the frontend as JSON  
 
