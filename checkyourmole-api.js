@@ -49,6 +49,7 @@ function displayResults(result) {
   const diagnosisLabel = document.getElementById('diagnosisLabel');
   const confidenceValue = document.getElementById('confidenceValue');
   const resultCard = document.getElementById('resultCard');
+  const originalImage = document.getElementById('originalImage');
   const gradcamImage = document.getElementById('gradcamImage');
   const gradcamPlaceholder = document.getElementById('gradcamPlaceholder');
 
@@ -59,6 +60,11 @@ function displayResults(result) {
   diagnosisLabel.textContent = `Diagnosis: ${labelText}`;
   confidenceValue.textContent = `Confidence: ${confidencePercent}%`;
   resultCard.className = `result-card ${isMalignant ? 'malignant' : 'benign'} active`;
+
+  // Update original image with preprocessed version
+  if (result.preprocessed_image) {
+    originalImage.src = result.preprocessed_image;
+  }
 
   // Update Grad-CAM image and hide placeholder
   gradcamImage.onload = () => {
