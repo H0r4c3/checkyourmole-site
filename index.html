@@ -71,18 +71,35 @@
 
   <!-- ✅ Fixed inline script -->
   <script>
-    const fileInput = document.getElementById('file-upload');
-    const originalImage = document.getElementById('originalImage');
-    const analyzeBtn = document.getElementById('analyzeBtn');
+  const fileInput = document.getElementById('file-upload');
+  const originalImage = document.getElementById('originalImage');
+  const gradcamImage = document.getElementById('gradcamImage');
+  const analyzeBtn = document.getElementById('analyzeBtn');
 
-    fileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (file) {
-        originalImage.src = URL.createObjectURL(file); // show preview
-        analyzeBtn.disabled = false; // enable button
-      }
-    });
-  </script>
+  fileInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      // Show the new original image preview
+      originalImage.src = URL.createObjectURL(file);
+
+      // ✅ Clear previous Grad-CAM and show placeholder text
+      gradcamImage.src = '';
+      gradcamImage.classList.add('placeholder');
+      gradcamImage.alt = 'No heatmap yet';
+
+      // Enable the Analyze button
+      analyzeBtn.disabled = false;
+    }
+  });
+
+  // When a new Grad-CAM image is loaded after analysis, remove placeholder style
+  gradcamImage.addEventListener('load', () => {
+    if (gradcamImage.src && !gradcamImage.src.endsWith('data:')) {
+      gradcamImage.classList.remove('placeholder');
+    }
+  });
+</script>
+
 
 </body>
 </html>
