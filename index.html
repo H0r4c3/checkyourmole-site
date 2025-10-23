@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI-powered mole classification demo using deep learning and Grad-CAM visualization" />
+  <meta name="keywords" content="AI, mole classification, skin cancer, Grad-CAM, deep learning" />
+  <title>CheckYourMole — AI Mole Classification Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <header>
+    <h1>CheckYourMole — AI Mole Classification Demo</h1>
+    <p class="tagline">Upload a mole image to see how AI analyzes it</p>
+    <div class="disclaimer-banner">⚠️ Educational only. Not a medical diagnosis.</div>
+  </header>
+
+  <main>
+    <section class="upload-section">
+      <div class="upload-box">
+
+        <!-- Original image -->
+        <div class="image-box">
+          <h3>Original Image</h3>
+          <div class="image-container">
+            <img id="originalImage" src="" alt="Upload an image to preview" class="preview-image" style="display:none;" />
+            <div class="placeholder-text" id="originalPlaceholder">No image selected</div>
+          </div>
+          <label for="file-upload" class="custom-file-upload">Choose Image</label>
+          <input id="file-upload" type="file" accept="image/jpeg,image/jpg,image/png" />
+          <p class="caption">Accepted formats: JPG, PNG (max 10MB)</p>
+        </div>
+
+        <!-- Grad-CAM -->
+        <div class="image-box">
+          <h3>Grad-CAM Heatmap</h3>
+          <div class="image-container">
+            <img id="gradcamImage" src="" alt="Grad-CAM will appear after analysis" class="preview-image" style="display:none;" />
+            <div class="placeholder-text" id="gradcamPlaceholder">Awaiting analysis</div>
+          </div>
+          <p class="caption">Model focus visualization</p>
+        </div>
+      </div>
+
+      <!-- Analyze button + spinner -->
+      <button id="analyzeBtn" class="analyze-button" disabled>Analyze Image</button>
+      
+      <div id="loadingSpinner" class="spinner">
+        <div class="spinner-circle"></div>
+        <p>Analyzing image... This may take a few seconds</p>
+      </div>
+
+      <div class="explanation">
+        <p>
+          <strong>How it works:</strong> The AI model uses Grad-CAM (Gradient-weighted Class Activation Mapping) 
+          to highlight areas of interest in the mole image. This visualization helps understand what features 
+          the model is focusing on during classification.
+        </p>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section id="resultsSection" class="results">
+      <div id="resultCard" class="result-card">
+        <h2 id="diagnosisLabel">Diagnosis: Awaiting analysis</h2>
+        <p id="confidenceValue">Confidence: -</p>
+        <div class="result-info">
+          <p>⚠️ This is an AI prediction for educational purposes only. Always consult a healthcare professional for medical advice.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-content">
+      <p class="creator">Created by Horatiu Crista</p>
+      <div class="social-links">
+        <a href="https://huggingface.co/horatiu-crista" target="_blank" rel="noopener noreferrer" aria-label="Hugging Face Profile">
+          🤗 Hugging Face
+        </a>
+        <span class="separator">|</span>
+        <a href="https://www.linkedin.com/in/horatiu-crista" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn Profile">
+          💼 LinkedIn
+        </a>
+      </div>
+      <p class="footer-disclaimer">
+        ⚠️ This AI tool is intended solely for educational and research purposes. 
+        It does not provide medical advice, diagnosis, or treatment. 
+        Always consult qualified healthcare professionals for medical concerns.
+      </p>
+    </div>
+  </footer>
+
+  <!-- JS -->
+  <script src="checkyourmole-api.js"></script>
+
+</body>
+</html>
