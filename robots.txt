@@ -1,4 +1,6 @@
+# Allow all search engines to crawl everything
 User-agent: *
 Allow: /
 
+# Point to your sitemap
 Sitemap: https://h0r4c3.github.io/checkyourmole-site/sitemap.xml
