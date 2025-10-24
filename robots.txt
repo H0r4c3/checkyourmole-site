@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://horatiu-crista.github.io/checkyourmole/sitemap.xml
