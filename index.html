@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="AI-powered mole classification demo using deep learning and Grad-CAM visualization" />
+  
+  <title>CheckYourMole – Free AI Mole Classifier | Educational Demo</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  
+  <!-- ✅ IMPROVED SEO META TAGS -->
+  <meta name="description" content="Free AI-powered mole classification tool using EfficientNetV2 and Grad-CAM. Upload dermoscopy images for instant benign/malignant analysis. Educational deep learning demo." />
+  <meta name="keywords" content="AI mole classifier, skin lesion analysis, melanoma detection, deep learning, EfficientNet, Grad-CAM, dermoscopy, machine learning healthcare" />
+  <meta name="author" content="Horatiu Crista" />
+  <meta name="robots" content="index, follow" />
+  
+  <!-- Open Graph (for social media sharing) -->
+  <meta property="og:title" content="CheckYourMole - AI Mole Classification Demo" />
+  <meta property="og:description" content="Free AI tool for educational mole analysis using deep learning. Upload images to see how AI classifies skin lesions." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://horatiu-crista.github.io/checkyourmole/" />
+  <meta property="og:image" content="https://horatiu-crista.github.io/checkyourmole/preview.png" />
+  
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CheckYourMole - AI Mole Classifier" />
+  <meta name="twitter:description" content="Free educational AI tool for skin lesion analysis" />
+  
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TXR97132L9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-TXR97132L9');
+  </script>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+      color: #333;
+      line-height: 1.6;
+    }
+
+    /* Header */
+    header {
+      padding: 2rem 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .tagline {
+      font-size: 1.2rem;
+      opacity: 0.95;
+    }
+
+    .disclaimer-banner {
+      background-color: #fff3cd;
+      border: 2px solid #ffc107;
+      color: #856404;
+      padding: 1rem;
+      margin: 1.5rem auto 0;
+      max-width: 600px;
+      font-weight: 600;
+      border-radius: 8px;
+    }
+
+    /* HERO SECTION - Always visible */
+    .hero-section {
+      padding: 3rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .hero-section h2 {
+      color: #495057;
+      font-size: 1.8rem;
+      margin-bottom: 2rem;
+      font-weight: 600;
+    }
+
+    /* Three-box layout */
+    .upload-box {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      max-width: 1100px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .image-box {
+      border: 2px solid #e0e0e0;
+      padding: 1.5rem;
+      background-color: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+      transition: transform 0.2s;
+    }
+
+    .image-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+    }
+
+    .image-box h3 {
+      margin-bottom: 1rem;
+      color: #495057;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+
+    .image-container {
+      position: relative;
+      width: 100%;
+      min-height: 200px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .placeholder-text {
+      color: #6c757d;
+      font-style: italic;
+      font-size: 0.95rem;
+      position: absolute;
+    }
+
+    .preview-image {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
+      position: relative;
+      z-index: 1;
+    }
+
+    .custom-file-upload {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      cursor: pointer;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 1rem;
+      transition: transform 0.2s;
+      box-shadow: 0 2px 5px rgba(102, 126, 234, 0.3);
+    }
+
+    .custom-file-upload:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(102, 126, 234, 0.4);
+    }
+
+    input[type="file"] {
+      display: none;
+    }
+
+    .caption {
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-top: 0.75rem;
+    }
+
+    /* FULL WIDTH ANALYZE BUTTON */
+    .analyze-button {
+      width: 100%;
+      max-width: 1100px;
+      padding: 1.25rem 3rem;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+      margin: 0 auto 2rem auto;
+      display: block;
+    }
+
+    .analyze-button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+    }
+
+    .analyze-button:disabled {
+      background: linear-gradient(135deg, #6c757d 0%, #95a5a6 100%);
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .spinner {
+      display: none;
+      text-align: center;
+      margin: 2rem auto;
+    }
+
+    .spinner.active {
+      display: block;
+    }
+
+    .spinner-circle {
+      margin: 0 auto 1rem;
+      width: 50px;
+      height: 50px;
+      border: 5px solid #f3f3f3;
+      border-top: 5px solid #667eea;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .result-card {
+      display: none;
+      max-width: 500px;
+      margin: 2rem auto;
+      padding: 2rem;
+      border-radius: 16px;
+      color: white;
+      font-weight: 600;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      animation: slideIn 0.5s ease-out;
+    }
+
+    .result-card.active {
+      display: block;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-card.benign {
+      background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+      border: 3px solid #2e7d32;
+    }
+
+    .result-card.malignant {
+      background: linear-gradient(135deg, #e53935 0%, #ef5350 100%);
+      border: 3px solid #b71c1c;
+    }
+
+    .result-card h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .result-info {
+      margin-top: 1.5rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid rgba(255,255,255,0.3);
+      font-size: 0.9rem;
+      font-weight: 400;
+      opacity: 0.95;
+    }
+
+    /* TABS SECTION - Below hero */
+    .tabs-section {
+      background: #f8f9fa;
+      padding: 2rem 0;
+      margin-top: 3rem;
+      border-top: 3px solid #e0e0e0;
+    }
+
+    .tab-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 0.5rem;
+      border-bottom: 2px solid #e0e0e0;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .tab-btn {
+      padding: 1rem 1.5rem;
+      background: transparent;
+      border: none;
+      color: #495057;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s;
+    }
+
+    .tab-btn:hover {
+      color: #667eea;
+      background: rgba(102, 126, 234, 0.05);
+    }
+
+    .tab-btn.active {
+      color: #667eea;
+      border-bottom-color: #667eea;
+      font-weight: 600;
+    }
+
+    .tab-content {
+      display: none;
+      padding: 2rem 1rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      animation: fadeIn 0.4s;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Info Cards */
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .info-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+      border-left: 4px solid #667eea;
+    }
+
+    .info-card h3 {
+      color: #495057;
+      font-size: 1.2rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .info-card ul {
+      text-align: left;
+      margin-left: 1.2rem;
+      color: #495057;
+    }
+
+    .info-card li {
+      margin: 0.5rem 0;
+      line-height: 1.6;
+    }
+
+    .icon {
+      font-size: 1.5rem;
+    }
+
+    /* Stats */
+    .stats-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .stat-box {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+
+    /* Pipeline Diagram */
+    .pipeline {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+      margin: 2rem 0;
+    }
+
+    .pipeline h3 {
+      color: #495057;
+      margin-bottom: 1.5rem;
+      font-size: 1.4rem;
+    }
+
+    .pipeline-steps {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .pipeline-step {
+      text-align: center;
+      flex: 1;
+      min-width: 150px;
+    }
+
+    .pipeline-step-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      font-size: 2rem;
+      color: white;
+      box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .pipeline-arrow {
+      font-size: 2rem;
+      color: #667eea;
+    }
+
+    /* Feedback Form */
+    .feedback-form {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+      max-width: 600px;
+      margin: 2rem auto;
+    }
+
+    .feedback-form h3 {
+      color: #495057;
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+      margin-bottom: 1.5rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      color: #495057;
+      font-weight: 500;
+    }
+
+    .form-group input,
+    .form-group textarea,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .form-group textarea {
+      resize: vertical;
+      min-height: 120px;
+    }
+
+    .submit-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      padding: 0.75rem 2rem;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 4rem;
+      padding: 2.5rem 1rem;
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      text-align: center;
+    }
+
+    .footer-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .social-links {
+      margin: 1rem 0;
+    }
+
+    .social-links a {
+      color: #3498db;
+      text-decoration: none;
+      font-weight: 500;
+      margin: 0 1rem;
+      transition: color 0.2s;
+    }
+
+    .social-links a:hover {
+      color: #5dade2;
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 968px) {
+      .upload-box {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+
+      .analyze-button {
+        font-size: 1.1rem;
+      }
+    }
+
+    @media (max-width: 768px) {
+      header h1 {
+        font-size: 1.5rem;
+      }
+
+      .hero-section h2 {
+        font-size: 1.4rem;
+      }
+
+      .tabs {
+        font-size: 0.9rem;
+      }
+
+      .tab-btn {
+        padding: 0.75rem 1rem;
+      }
+
+      .pipeline-steps {
+        flex-direction: column;
+      }
+
+      .pipeline-arrow {
+        transform: rotate(90deg);
+      }
+
+      .stat-number {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>CheckYourMole – AI Mole Classification</h1>
+    <p class="tagline">Upload a mole image to see how AI analyzes it</p>
+    <div class="disclaimer-banner">⚠️ Educational only. Not a medical diagnosis.</div>
+  </header>
+
+  <!-- ============================================ -->
+  <!-- HERO SECTION - Always Visible -->
+  <!-- ============================================ -->
+  <section class="hero-section">
+    <h2>🔬 Analyze Your Image</h2>
+
+    <!-- THREE BOXES: Original | Preprocessed | Grad-CAM -->
+    <div class="upload-box">
+      <!-- Box 1: Original Image -->
+      <div class="image-box">
+        <h3>Original Image</h3>
+        <div class="image-container">
+          <img id="originalImage" src="" alt="Upload an image" class="preview-image" style="display:none;" />
+          <div class="placeholder-text" id="originalPlaceholder">No image selected</div>
+        </div>
+        <label for="file-upload" class="custom-file-upload">Choose Image</label>
+        <input id="file-upload" type="file" accept="image/jpeg,image/jpg,image/png" />
+        <p class="caption">JPG/PNG (max 10MB)</p>
+      </div>
+
+      <!-- Box 2: Preprocessed Image -->
+      <div class="image-box">
+        <h3>Preprocessed Image</h3>
+        <div class="image-container">
+          <img id="preprocessedImage" src="" alt="Preprocessed" class="preview-image" style="display:none;" />
+          <div class="placeholder-text" id="preprocessedPlaceholder">Awaiting analysis</div>
+        </div>
+        <p class="caption">Hair removal + enhancement</p>
+      </div>
+
+      <!-- Box 3: Grad-CAM -->
+      <div class="image-box">
+        <h3>Grad-CAM Heatmap</h3>
+        <div class="image-container">
+          <img id="gradcamImage" src="" alt="Grad-CAM" class="preview-image" style="display:none;" />
+          <div class="placeholder-text" id="gradcamPlaceholder">Awaiting analysis</div>
+        </div>
+        <p class="caption">Model focus visualization</p>
+        <p class="caption">Shows which regions influenced the AI's decision</p>
+        <p class="caption">Red/yellow = high attention from model</p>
+        <p class="caption">Blue/purple = low attention</p>
+      </div>
+    </div>
+
+    <!-- FULL WIDTH ANALYZE BUTTON -->
+    <button id="analyzeBtn" class="analyze-button" disabled>Analyze Image</button>
+    
+    <div id="loadingSpinner" class="spinner">
+      <div class="spinner-circle"></div>
+      <p>Analyzing image... This may take a few seconds</p>
+    </div>
+
+    <!-- Results Card -->
+    <div id="resultCard" class="result-card">
+      <h2 id="diagnosisLabel">Diagnosis: Awaiting analysis</h2>
+      <p id="confidenceValue">Confidence: -</p>
+      <div class="result-info">
+        <p>⚠️ This is an AI prediction for educational purposes only. Always consult a healthcare professional.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================ -->
+  <!-- TABS SECTION - Educational Content -->
+  <!-- ============================================ -->
+  <section class="tabs-section">
+    <div class="tab-container">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="showTab('guidelines')">📸 Photo Guidelines</button>
+        <button class="tab-btn" onclick="showTab('how-it-works')">⚙️ How It Works</button>
+        <button class="tab-btn" onclick="showTab('model-info')">🧠 Model Info</button>
+        <button class="tab-btn" onclick="showTab('stats')">📊 Statistics</button>
+        <button class="tab-btn" onclick="showTab('feedback')">💬 Feedback</button>
+      </div>
+
+      <!-- Photo Guidelines Tab -->
+      <div id="guidelines" class="tab-content active">
+        <h2 style="color: #495057; margin-bottom: 2rem; text-align: center;">📸 Photo Guidelines for Best Results</h2>
+        
+        <div class="info-grid">
+          <div class="info-card">
+            <h3><span class="icon">✅</span> Good Photos</h3>
+            <ul>
+              <li><strong>Macro mode:</strong> Use phone's macro mode for close-ups</li>
+              <li><strong>Natural lighting:</strong> Take photos in daylight</li>
+              <li><strong>Focus:</strong> Mole should be sharp and centered</li>
+              <li><strong>Distance:</strong> Fill 60-80% of frame with lesion</li>
+              <li><strong>No flash:</strong> Avoid harsh shadows and glare</li>
+              <li><strong>Flat surface:</strong> Keep phone parallel to skin</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h3><span class="icon">❌</span> Avoid</h3>
+            <ul>
+              <li><strong>Blurry images:</strong> Hold phone steady</li>
+              <li><strong>Too far:</strong> Lesion should be visible</li>
+              <li><strong>Bad lighting:</strong> No shadows or overexposure</li>
+              <li><strong>Filters:</strong> Upload original, unedited photos</li>
+              <li><strong>Obscured lesions:</strong> Remove hair/bandages</li>
+              <li><strong>Multiple moles:</strong> One lesion per photo</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h3><span class="icon">📱</span> Phone Settings</h3>
+            <ul>
+              <li><strong>Resolution:</strong> Use highest quality (12MP+)</li>
+              <li><strong>HDR:</strong> Turn off HDR mode</li>
+              <li><strong>Zoom:</strong> Use optical zoom, not digital</li>
+              <li><strong>Format:</strong> Save as JPG or PNG</li>
+              <li><strong>Stabilization:</strong> Enable image stabilization</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h3><span class="icon">🎯</span> Pro Tips</h3>
+            <ul>
+              <li>Use a ruler nearby for size reference</li>
+              <li>Take multiple photos from different angles</li>
+              <li>Avoid photos through glass or plastic</li>
+              <li>Clean the camera lens before shooting</li>
+              <li>For hairy areas, gently part hair to expose lesion</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- How It Works Tab -->
+      <div id="how-it-works" class="tab-content">
+        <h2 style="color: #495057; margin-bottom: 2rem; text-align: center;">⚙️ Behind the Scenes</h2>
+        
+        <div class="pipeline">
+          <h3>Processing Pipeline</h3>
+          <div class="pipeline-steps">
+            <div class="pipeline-step">
+              <div class="pipeline-step-icon">📤</div>
+              <strong>Upload</strong>
+              <p>Your image is securely uploaded</p>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+              <div class="pipeline-step-icon">🔧</div>
+              <strong>Preprocessing</strong>
+              <p>Hair removal, contrast enhancement</p>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+              <div class="pipeline-step-icon">🧠</div>
+              <strong>AI Analysis</strong>
+              <p>EfficientNetV2-B3 classification</p>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+              <div class="pipeline-step-icon">🎨</div>
+              <strong>Grad-CAM</strong>
+              <p>Visual explanation</p>
+            </div>
+            <span class="pipeline-arrow">→</span>
+            <div class="pipeline-step">
+              <div class="pipeline-step-icon">📊</div>
+              <strong>Results</strong>
+              <p>Classification + confidence</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-grid" style="margin-top: 2rem;">
+          <div class="info-card">
+            <h3><span class="icon">🔍</span> Preprocessing Steps</h3>
+            <ul>
+              <li><strong>Hair Removal:</strong> Morphological filtering removes hair artifacts</li>
+              <li><strong>CLAHE:</strong> Adaptive histogram equalization enhances local contrast</li>
+              <li><strong>Color Normalization:</strong> Reduces lighting variations</li>
+              <li><strong>Center Crop:</strong> Focuses on lesion region (85%)</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h3><span class="icon">🎓</span> What is Grad-CAM?</h3>
+            <ul>
+              <li><strong>Gradient-weighted Class Activation Mapping</strong></li>
+              <li>Shows which regions influenced the AI's decision</li>
+              <li>Red/yellow = high attention from model</li>
+              <li>Blue/purple = low attention</li>
+              <li>Verifies model looks at lesion, not background</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Model Info Tab -->
+      <div id="model-info" class="tab-content">
+        <h2 style="color: #495057; margin-bottom: 2rem; text-align: center;">🧠 Model Information</h2>
+        
+        <div class="info-grid">
+          <div class="info-card">
+            <h3><span class="icon">🏗️</span> Architecture</h3>
+            <ul>
+              <li><strong>Base Model:</strong> EfficientNetV2-B3</li>
+              <li><strong>Pretrained:</strong> ImageNet weights</li>
+              <li><strong>Custom Head:</strong> Attention mechanism + Dense layers</li>
+              <li><strong>Parameters:</strong> ~14M total, ~2M trainable</li>
+              <li><strong>Input Size:</strong> 300×300 RGB images</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h3><span class="icon">📚</span> Training Data</h3>
+            <ul>
+              <li><strong>Dataset:</strong> HAM10000 and ISIC Archive</li>
+              <li><strong>Total Images:</strong> 10,015 dermoscopy images</li>
+              <li><strong>Classes:</strong> Binary (Benign vs Malignant)</li>
+              <li><strong>Malignant:</strong> Melanoma, BCC, Actinic Keratosis</li>
+              <li><strong>Benign:</strong> Nevi, Seborrheic Keratosis, Vascular, Dermatofibroma</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h3><span class="icon">📊</span> Performance Metrics</h3>
+            <ul>
+              <li><strong>Accuracy:</strong> 89.2% on validation set</li>
+              <li><strong>Sensitivity:</strong> 91.5% (detects malignant)</li>
+              <li><strong>Specificity:</strong> 87.8% (detects benign)</li>
+              <li><strong>AUC-ROC:</strong> 0.94</li>
+              <li><strong>Training Time:</strong> 70 epochs (~2 hours on GPU)</li>
+            </ul>
+          </div>
+
+          <div class="info-card">
+            <h3><span class="icon">⚙️</span> Training Details</h3>
+            <ul>
+              <li><strong>Optimizer:</strong> Adam (lr=5e-4)</li>
+              <li><strong>Loss:</strong> Binary cross-entropy + attention penalty</li>
+              <li><strong>Regularization:</strong> L2 (2e-5), Dropout (0.25)</li>
+              <li><strong>Data Augmentation:</strong> Rotation, flip, zoom, brightness</li>
+              <li><strong>Two-Phase Training:</strong> Head-only → Full fine-tuning</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="info-card" style="margin-top: 1.5rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none;">
+          <h3 style="color: white;">⚠️ Important Limitations</h3>
+          <ul style="color: white;">
+            <li>This model is <strong>NOT</strong> a medical device</li>
+            <li>Trained on dermoscopy images (professional equipment)</li>
+            <li>Performance may vary with phone camera images</li>
+            <li>Cannot detect all types of skin cancer</li>
+            <li>Always consult a dermatologist for suspicious lesions</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Statistics Tab -->
+      <div id="stats" class="tab-content">
+        <h2 style="color: #495057; margin-bottom: 2rem; text-align: center;">📊 Usage Statistics</h2>
+        
+        <div class="stats-container">
+          <div class="stat-box">
+            <span class="stat-number" id="totalVisitors">-</span>
+            <span class="stat-label">Total Visitors</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number" id="totalAnalyses">-</span>
+            <span class="stat-label">Images Analyzed</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-number" id="avgConfidence">-</span>
+            <span class="stat-label">Avg Confidence</span>
+          </div>
+        </div>
+
+        <div class="info-card" style="margin-top: 2rem;">
+          <h3><span class="icon">🌍</span> Geographic Distribution</h3>
+          <p style="color: #6c757d; text-align: center; margin-top: 1rem;">
+            <em>Statistics tracking coming soon. This feature will show visitor countries and analysis trends.</em>
+          </p>
+        </div>
+
+        <div class="info-card" style="margin-top: 1rem; text-align: center;">
+          <p style="color: #495057;">
+            📝 <strong>Note:</strong> Statistics are collected anonymously for educational purposes only. 
+            No personal information or images are stored after analysis.
+          </p>
+        </div>
+      </div>
+
+      <!-- Feedback Tab -->
+      <div id="feedback" class="tab-content">
+        <h2 style="color: #495057; margin-bottom: 2rem; text-align: center;">💬 Your Feedback Matters</h2>
+        
+        <div class="feedback-form">
+          <h3>Share Your Experience</h3>
+          <form id="feedbackForm" onsubmit="submitFeedback(event)">
+            <div class="form-group">
+              <label for="feedbackName">Name (Optional)</label>
+              <input type="text" id="feedbackName" placeholder="Your name" />
+            </div>
+
+            <div class="form-group">
+              <label for="feedbackEmail">Email (Optional)</label>
+              <input type="email" id="feedbackEmail" placeholder="your.email@example.com" />
+            </div>
+
+            <div class="form-group">
+              <label for="feedbackCategory">Category</label>
+              <select id="feedbackCategory">
+                <option value="general">General Feedback</option>
+                <option value="bug">Bug Report</option>
+                <option value="feature">Feature Request</option>
+                <option value="accuracy">Model Accuracy</option>
+                <option value="ui">User Interface</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="feedbackMessage">Your Feedback *</label>
+              <textarea id="feedbackMessage" placeholder="Share your thoughts, suggestions, or issues..." required></textarea>
+            </div>
+
+            <div class="form-group">
+              <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                <input type="checkbox" id="feedbackConsent" style="width: auto;" required />
+                <span>I understand this is an educational tool and not for medical diagnosis</span>
+              </label>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Feedback</button>
+          </form>
+          
+          <div id="feedbackSuccess" style="display: none; margin-top: 1.5rem; padding: 1rem; background: #d4edda; border: 2px solid #28a745; border-radius: 8px; color: #155724; text-align: center;">
+            ✅ Thank you for your feedback! Your input helps improve this tool.
+          </div>
+        </div>
+
+        <div class="info-card" style="margin-top: 2rem;">
+          <h3><span class="icon">💡</span> What We're Looking For</h3>
+          <ul>
+            <li><strong>User Experience:</strong> Is the interface intuitive and easy to use?</li>
+            <li><strong>Model Performance:</strong> Did the results match your expectations?</li>
+            <li><strong>Feature Requests:</strong> What would make this tool more useful?</li>
+            <li><strong>Technical Issues:</strong> Any bugs or errors you encountered?</li>
+            <li><strong>Educational Value:</strong> Did you learn something about AI and medical imaging?</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <p style="font-size: 1.1rem; margin-bottom: 1rem; font-weight: 500;">Created by Horatiu Crista</p>
+      <div class="social-links">
+        <a href="https://huggingface.co/horatiu-crista" target="_blank" rel="noopener noreferrer">🤗 Hugging Face</a>
+        <a href="https://www.linkedin.com/in/horatiu-crista" target="_blank" rel="noopener noreferrer">💼 LinkedIn</a>
+      </div>
+      <p style="margin-top: 1.5rem; font-size: 0.85rem; color: #bdc3c7; line-height: 1.6;">
+        ⚠️ This AI tool is intended solely for educational and research purposes. 
+        It does not provide medical advice, diagnosis, or treatment. 
+        Always consult qualified healthcare professionals for medical concerns.
+      </p>
+    </div>
+  </footer>
+    
+  <script>
+    const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
+    
+    // Statistics now tracked by Google Analytics
+    let stats = {
+      visits: parseInt(localStorage.getItem('totalVisits') || '0'),  // Keep for display
+      analyses: parseInt(localStorage.getItem('totalAnalyses') || '0'),
+      confidenceSum: parseFloat(localStorage.getItem('confidenceSum') || '0'),
+      confidenceCount: parseInt(localStorage.getItem('confidenceCount') || '0')
+    };
+
+    // Track page view with Google Analytics
+    stats.visits++;
+    localStorage.setItem('totalVisits', stats.visits);
+    updateStatsDisplay();
+    
+    // Send page view to Google Analytics
+    gtag('event', 'page_view', {
+      page_title: 'CheckYourMole Homepage',
+      page_location: window.location.href
+    });
+
+    // Tab switching
+    function showTab(tabName) {
+      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      
+      document.getElementById(tabName).classList.add('active');
+      event.target.classList.add('active');
+    }
+
+    // Update statistics display
+    function updateStatsDisplay() {
+      document.getElementById('totalVisitors').textContent = stats.visits.toLocaleString();
+      document.getElementById('totalAnalyses').textContent = stats.analyses.toLocaleString();
+      
+      if (stats.confidenceCount > 0) {
+        const avgConf = ((stats.confidenceSum / stats.confidenceCount) * 100).toFixed(1);
+        document.getElementById('avgConfidence').textContent = avgConf + '%';
+      } else {
+        document.getElementById('avgConfidence').textContent = '-';
+      }
+    }
+
+    // Image analysis
+    async function analyzeImage(imageFile) {
+      try {
+        const formData = new FormData();
+        formData.append('file', imageFile);
+        showLoading(true);
+
+        const response = await fetch(API_URL, {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const result = await response.json();
+        showLoading(false);
+
+        if (!result.success) {
+          throw new Error(result.error || 'Analysis failed');
+        }
+        
+        // Update statistics
+        stats.analyses++;
+        stats.confidenceSum += result.confidence;
+        stats.confidenceCount++;
+        localStorage.setItem('totalAnalyses', stats.analyses);
+        localStorage.setItem('confidenceSum', stats.confidenceSum);
+        localStorage.setItem('confidenceCount', stats.confidenceCount);
+        updateStatsDisplay();
+        
+        displayResults(result);
+
+      } catch (error) {
+        showLoading(false);
+        const errorMessage = error.message.includes('Failed to fetch') 
+          ? 'Cannot connect to API. Please check if the Hugging Face Space is running.'
+          : error.message;
+        alert(`Analysis failed: ${errorMessage}`);
+        console.error('Analysis error:', error);
+      }
+    }
+
+    function displayResults(result) {
+      const diagnosisLabel = document.getElementById('diagnosisLabel');
+      const confidenceValue = document.getElementById('confidenceValue');
+      const resultCard = document.getElementById('resultCard');
+      
+      // After updating stats, add this:
+      stats.analyses++;
+      stats.confidenceSum += result.confidence;
+      stats.confidenceCount++;
+      localStorage.setItem('totalAnalyses', stats.analyses);
+      localStorage.setItem('confidenceSum', stats.confidenceSum);
+      localStorage.setItem('confidenceCount', stats.confidenceCount);
+      updateStatsDisplay();
+      
+      // ✅ ADD THIS - Track analysis event in Google Analytics
+      gtag('event', 'analyze_image', {
+        prediction: result.prediction,
+        confidence: (result.confidence * 100).toFixed(1),
+        event_category: 'Analysis',
+        event_label: result.prediction === 'malignant' ? 'Malignant' : 'Benign'
+      });
+
+      // Original image stays as uploaded
+      // No changes needed - already showing user's upload
+      
+      // Show preprocessed image in middle box
+      const preprocessedImage = document.getElementById('preprocessedImage');
+      const preprocessedPlaceholder = document.getElementById('preprocessedPlaceholder');
+      
+      if (result.preprocessed_image) {
+        preprocessedImage.onload = () => {
+          preprocessedPlaceholder.style.display = 'none';
+        };
+        preprocessedImage.src = result.preprocessed_image;
+        preprocessedImage.style.display = 'block';
+      }
+
+      // Show Grad-CAM in third box
+      const gradcamImage = document.getElementById('gradcamImage');
+      const gradcamPlaceholder = document.getElementById('gradcamPlaceholder');
+      
+      if (result.gradcam_overlay) {
+        gradcamImage.onload = () => {
+          gradcamPlaceholder.style.display = 'none';
+          gradcamImage.style.display = 'block';
+        };
+        gradcamImage.src = result.gradcam_overlay;
+      }
+
+      // Update result card
+      const isMalignant = result.prediction === 'malignant';
+      const labelText = isMalignant ? 'Malignant' : 'Benign';
+      const confidencePercent = (result.confidence * 100).toFixed(1);
+
+      diagnosisLabel.textContent = `Diagnosis: ${labelText}`;
+      confidenceValue.textContent = `Confidence: ${confidencePercent}%`;
+      resultCard.className = `result-card ${isMalignant ? 'malignant' : 'benign'} active`;
+
+      // Scroll to results
+      setTimeout(() => {
+        resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+    }
+
+    function showLoading(show) {
+      const spinner = document.getElementById('loadingSpinner');
+      const analyzeBtn = document.getElementById('analyzeBtn');
+      
+      if (show) {
+        spinner.classList.add('active');
+        analyzeBtn.disabled = true;
+        analyzeBtn.textContent = 'Analyzing...';
+      } else {
+        spinner.classList.remove('active');
+        analyzeBtn.disabled = false;
+        analyzeBtn.textContent = 'Analyze Image';
+      }
+    }
+
+    // Feedback form submission
+    function submitFeedback(event) {
+      event.preventDefault();
+      
+      const feedback = {
+        name: document.getElementById('feedbackName').value,
+        email: document.getElementById('feedbackEmail').value,
+        category: document.getElementById('feedbackCategory').value,
+        message: document.getElementById('feedbackMessage').value,
+        timestamp: new Date().toISOString()
+      };
+
+      // Store locally (in production, send to backend)
+      let feedbackList = JSON.parse(localStorage.getItem('feedbackList') || '[]');
+      feedbackList.push(feedback);
+      localStorage.setItem('feedbackList', JSON.stringify(feedbackList));
+
+      // Show success message
+      document.getElementById('feedbackForm').style.display = 'none';
+      document.getElementById('feedbackSuccess').style.display = 'block';
+
+      // Reset form after 3 seconds
+      setTimeout(() => {
+        document.getElementById('feedbackForm').reset();
+        document.getElementById('feedbackForm').style.display = 'block';
+        document.getElementById('feedbackSuccess').style.display = 'none';
+      }, 3000);
+
+      console.log('Feedback submitted:', feedback);
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', () => {
+      const analyzeBtn = document.getElementById('analyzeBtn');
+      const fileInput = document.getElementById('file-upload');
+      const originalImage = document.getElementById('originalImage');
+      const originalPlaceholder = document.getElementById('originalPlaceholder');
+      const preprocessedImage = document.getElementById('preprocessedImage');
+      const preprocessedPlaceholder = document.getElementById('preprocessedPlaceholder');
+      const gradcamImage = document.getElementById('gradcamImage');
+      const gradcamPlaceholder = document.getElementById('gradcamPlaceholder');
+      const resultCard = document.getElementById('resultCard');
+
+      let selectedFile = null;
+
+      fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        
+        if (!file) return;
+        
+        if (!file.type.startsWith('image/')) {
+          alert('Please select a valid image file');
+          fileInput.value = '';
+          return;
+        }
+
+        if (file.size > 10 * 1024 * 1024) {
+          alert('Image is too large. Please select an image under 10MB');
+          fileInput.value = '';
+          return;
+        }
+
+        selectedFile = file;
+        
+        // Show original image (user's upload)
+        const imageUrl = URL.createObjectURL(file);
+        originalImage.onload = () => {
+          originalPlaceholder.style.display = 'none';
+        };
+        originalImage.src = imageUrl;
+        originalImage.style.display = 'block';
+        
+        // Reset preprocessed and Grad-CAM boxes
+        preprocessedImage.src = '';
+        preprocessedImage.style.display = 'none';
+        preprocessedPlaceholder.style.display = 'flex';
+        preprocessedPlaceholder.textContent = 'Awaiting analysis';
+        
+        gradcamImage.src = '';
+        gradcamImage.style.display = 'none';
+        gradcamPlaceholder.style.display = 'flex';
+        gradcamPlaceholder.textContent = 'Awaiting analysis';
+        
+        resultCard.classList.remove('active');
+        analyzeBtn.disabled = false;
+      });
+
+      analyzeBtn.addEventListener('click', async () => {
+        if (!selectedFile) {
+          alert('Please upload an image first');
+          return;
+        }
+        await analyzeImage(selectedFile);
+      });
+
+      gradcamImage.addEventListener('error', () => {
+        console.error('Failed to load Grad-CAM image');
+        gradcamPlaceholder.style.display = 'flex';
+        gradcamPlaceholder.textContent = 'Error loading heatmap';
+        gradcamImage.style.display = 'none';
+      });
+    });
+  </script>
+
+</body>
+</html>
