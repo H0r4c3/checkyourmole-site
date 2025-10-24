@@ -1,11 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="AI-powered mole classification demo using deep learning and Grad-CAM visualization" />
-  <title>CheckYourMole – AI Mole Classification Demo</title>
+  <title>CheckYourMole – AI Mole Classification</title>
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TXR97132L9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-TXR97132L9');
+  </script>
+
   <style>
     * {
       margin: 0;
@@ -578,7 +590,7 @@
 <body>
 
   <header>
-    <h1>CheckYourMole – AI Mole Classification Demo</h1>
+    <h1>CheckYourMole – AI Mole Classification</h1>
     <p class="tagline">Upload a mole image to see how AI analyzes it</p>
     <div class="disclaimer-banner">⚠️ Educational only. Not a medical diagnosis.</div>
   </header>
@@ -621,6 +633,9 @@
           <div class="placeholder-text" id="gradcamPlaceholder">Awaiting analysis</div>
         </div>
         <p class="caption">Model focus visualization</p>
+        <p class="caption">Shows which regions influenced the AI's decision</p>
+        <p class="caption">Red/yellow = high attention from model</p>
+        <p class="caption">Blue/purple = low attention</p>
       </div>
     </div>
 
@@ -790,7 +805,7 @@
           <div class="info-card">
             <h3><span class="icon">📚</span> Training Data</h3>
             <ul>
-              <li><strong>Dataset:</strong> HAM10000 (ISIC Archive)</li>
+              <li><strong>Dataset:</strong> HAM10000 and ISIC Archive</li>
               <li><strong>Total Images:</strong> 10,015 dermoscopy images</li>
               <li><strong>Classes:</strong> Binary (Benign vs Malignant)</li>
               <li><strong>Malignant:</strong> Melanoma, BCC, Actinic Keratosis</li>
@@ -805,7 +820,7 @@
               <li><strong>Sensitivity:</strong> 91.5% (detects malignant)</li>
               <li><strong>Specificity:</strong> 87.8% (detects benign)</li>
               <li><strong>AUC-ROC:</strong> 0.94</li>
-              <li><strong>Training Time:</strong> 70 epochs (~6 hours on GPU)</li>
+              <li><strong>Training Time:</strong> 70 epochs (~2 hours on GPU)</li>
             </ul>
           </div>
 
@@ -943,22 +958,28 @@
       </p>
     </div>
   </footer>
-
+    
   <script>
     const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
     
-    // Statistics (using localStorage for demo - replace with real analytics)
+    // Statistics now tracked by Google Analytics
     let stats = {
-      visits: parseInt(localStorage.getItem('totalVisits') || '0'),
+      visits: parseInt(localStorage.getItem('totalVisits') || '0'),  // Keep for display
       analyses: parseInt(localStorage.getItem('totalAnalyses') || '0'),
       confidenceSum: parseFloat(localStorage.getItem('confidenceSum') || '0'),
       confidenceCount: parseInt(localStorage.getItem('confidenceCount') || '0')
     };
 
-    // Increment visit counter
+    // Track page view with Google Analytics
     stats.visits++;
     localStorage.setItem('totalVisits', stats.visits);
     updateStatsDisplay();
+    
+    // Send page view to Google Analytics
+    gtag('event', 'page_view', {
+      page_title: 'CheckYourMole Homepage',
+      page_location: window.location.href
+    });
 
     // Tab switching
     function showTab(tabName) {
@@ -1031,6 +1052,23 @@
       const confidenceValue = document.getElementById('confidenceValue');
       const resultCard = document.getElementById('resultCard');
       
+      // After updating stats, add this:
+      stats.analyses++;
+      stats.confidenceSum += result.confidence;
+      stats.confidenceCount++;
+      localStorage.setItem('totalAnalyses', stats.analyses);
+      localStorage.setItem('confidenceSum', stats.confidenceSum);
+      localStorage.setItem('confidenceCount', stats.confidenceCount);
+      updateStatsDisplay();
+      
+      // ✅ ADD THIS - Track analysis event in Google Analytics
+      gtag('event', 'analyze_image', {
+        prediction: result.prediction,
+        confidence: (result.confidence * 100).toFixed(1),
+        event_category: 'Analysis',
+        event_label: result.prediction === 'malignant' ? 'Malignant' : 'Benign'
+      });
+
       // Original image stays as uploaded
       // No changes needed - already showing user's upload
       
