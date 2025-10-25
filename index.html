@@ -1,69 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>CheckYourMole – Free AI Mole Classifier | Educational Demo</title>
   
-  <!-- ✅ IMPROVED SEO META TAGS -->
   <meta name="description" content="Free AI-powered mole classification tool using EfficientNetV2 and Grad-CAM. Upload dermoscopy images for instant benign/malignant analysis. Educational deep learning demo." />
   <meta name="keywords" content="AI mole classifier, skin lesion analysis, melanoma detection, deep learning, EfficientNet, Grad-CAM, dermoscopy, machine learning healthcare" />
   <meta name="author" content="Horatiu Crista" />
   <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://h0r4c3.github.io/checkyourmole-site/" />
   
-  <!-- Open Graph (for social media sharing) -->
-  <meta property="og:title" content="CheckYourMole - AI Mole Classification Demo" />
-  <meta property="og:description" content="Free AI tool for educational mole analysis using deep learning. Upload images to see how AI classifies skin lesions." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://h0r4c3.github.io/checkyourmole-site/" />
-  <meta property="og:image" content="https://h0r4c3.github.io/checkyourmole-site/preview.png" />
-  <meta property="og:site_name" content="CheckYourMole" />
-
-  <!-- Twitter Card -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="CheckYourMole - AI Mole Classifier" />
-  <meta name="twitter:description" content="Free educational AI tool for skin lesion analysis" />
-  <meta name="twitter:image" content="https://h0r4c3.github.io/checkyourmole-site/preview.png" />
-
-  <!-- Theme color -->
-  <meta name="theme-color" content="#667eea" />
-
-  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-
-  <!-- Google Analytics tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TXR97132L9"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-TXR97132L9');
-  </script>
-
-  <!-- Schema.org structured data -->
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "CheckYourMole",
-    "url": "https://h0r4c3.github.io/checkyourmole-site/",
-    "applicationCategory": "HealthApplication",
-    "operatingSystem": "All",
-    "softwareVersion": "1.0.0",
-    "creator": {
-      "@type": "Person",
-      "name": "Horatiu Crista",
-      "url": "https://www.linkedin.com/in/horatiu-crista/"
-    },
-    "image": "https://h0r4c3.github.io/checkyourmole-site/preview.png",
-    "license": "https://opensource.org/licenses/MIT",
-    "description": "AI-powered mole classification demo using deep learning and Grad-CAM visualization. Educational only – not a medical diagnosis.",
-    "keywords": ["AI", "mole classification", "skin lesion", "deep learning", "educational demo"]
-  }
-  </script>
 
   <style>
     * {
@@ -214,29 +161,49 @@
     .analyze-button {
       width: 100%;
       max-width: 1100px;
-      padding: 1.25rem 3rem;
-      font-size: 1.2rem;
-      font-weight: 600;
-      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      padding: 1.5rem 4rem;
+      font-size: 1.3rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       cursor: pointer;
-      transition: transform 0.2s;
-      box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 6px 20px rgba(255, 107, 107, 0.4);
       margin: 0 auto 2rem auto;
       display: block;
+      position: relative;
+      overflow: hidden;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .analyze-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
     }
 
     .analyze-button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(40, 167, 69, 0.4);
+      transform: translateY(-4px) scale(1.02);
+      box-shadow: 0 10px 30px rgba(255, 107, 107, 0.5);
+    }
+
+    .analyze-button:hover:not(:disabled)::before {
+      left: 100%;
     }
 
     .analyze-button:disabled {
       background: linear-gradient(135deg, #6c757d 0%, #95a5a6 100%);
       cursor: not-allowed;
       opacity: 0.6;
+      transform: none;
     }
 
     .spinner {
@@ -428,6 +395,30 @@
       border-radius: 12px;
       text-align: center;
       box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .stat-box::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: var(--progress, 0%);
+      height: 4px;
+      background: rgba(255, 255, 255, 0.9);
+      transition: width 1.5s ease-out;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     }
 
     .stat-number {
@@ -489,6 +480,119 @@
       color: #667eea;
     }
 
+    .testimonials-carousel {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.07);
+      margin: 2rem 0;
+      position: relative;
+      overflow: hidden;
+      min-height: 200px;
+    }
+
+    .testimonial-slide {
+      display: none;
+      text-align: center;
+      padding: 2rem 1rem;
+      animation: fadeIn 0.6s;
+    }
+
+    .testimonial-slide.active {
+      display: block;
+    }
+
+    .testimonial-text {
+      font-size: 1.1rem;
+      font-style: italic;
+      color: #495057;
+      margin-bottom: 1rem;
+      line-height: 1.8;
+    }
+
+    .testimonial-author {
+      font-weight: 600;
+      color: #667eea;
+    }
+
+    .carousel-dots {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 1.5rem;
+    }
+
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #e0e0e0;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .carousel-dot.active {
+      background: #667eea;
+      width: 30px;
+      border-radius: 5px;
+    }
+
+    .privacy-badge {
+      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-weight: 600;
+      box-shadow: 0 4px 10px rgba(40, 167, 69, 0.3);
+      margin: 2rem auto;
+    }
+
+    .privacy-icon {
+      font-size: 1.5rem;
+    }
+
+    .recruiter-note {
+      background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+      color: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .recruiter-note h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: white;
+    }
+
+    .recruiter-note ul {
+      list-style: none;
+      padding: 0;
+      margin-top: 1rem;
+    }
+
+    .recruiter-note li {
+      padding: 0.5rem 0;
+      padding-left: 1.5rem;
+      position: relative;
+      color: white;
+    }
+
+    .recruiter-note li::before {
+      content: '✓';
+      position: absolute;
+      left: 0;
+      color: #20c997;
+      font-weight: bold;
+    }
+
     .feedback-form {
       background: white;
       padding: 2rem;
@@ -496,11 +600,6 @@
       box-shadow: 0 4px 6px rgba(0,0,0,0.07);
       max-width: 600px;
       margin: 2rem auto;
-    }
-
-    .feedback-form h3 {
-      color: #495057;
-      margin-bottom: 1.5rem;
     }
 
     .form-group {
@@ -557,6 +656,28 @@
       box-shadow: 0 6px 15px rgba(102, 126, 234, 0.4);
     }
 
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.5rem 0;
+    }
+
+    table th, table td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+
+    table th {
+      background: #667eea;
+      color: white;
+      font-weight: 600;
+    }
+
+    table tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+
     footer {
       margin-top: 4rem;
       padding: 2.5rem 1rem;
@@ -586,59 +707,15 @@
       color: #5dade2;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1.5rem 0;
-    }
-
-    table th, table td {
-      padding: 12px;
-      border: 1px solid #ddd;
-      text-align: center;
-    }
-
-    table th {
-      background: #667eea;
-      color: white;
-      font-weight: 600;
-    }
-
-    table tr:nth-child(even) {
-      background: #f8f9fa;
-    }
-
     @media (max-width: 968px) {
       .upload-box {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      .analyze-button {
-        font-size: 1.1rem;
-      }
-    }
-
-    @media (max-width: 768px) {
-      header h1 {
-        font-size: 1.5rem;
-      }
-      .hero-section h2 {
-        font-size: 1.4rem;
-      }
-      .tabs {
-        font-size: 0.9rem;
-      }
-      .tab-btn {
-        padding: 0.75rem 1rem;
       }
       .pipeline-steps {
         flex-direction: column;
       }
       .pipeline-arrow {
         transform: rotate(90deg);
-      }
-      .stat-number {
-        font-size: 2rem;
       }
     }
   </style>
@@ -667,7 +744,6 @@
         <p class="caption" style="margin-top: 0.5rem;">
           📖 <a href="#" onclick="showTab('guidelines'); event.preventDefault(); document.querySelector('.tabs-section').scrollIntoView({behavior: 'smooth'});" style="color: #667eea; text-decoration: none; font-weight: 500;">View photo guidelines</a> for best results
         </p>
-        <p class="caption">(Use macro mode & natural light)</p>
       </div>
 
       <div class="image-box">
@@ -686,9 +762,6 @@
           <div class="placeholder-text" id="gradcamPlaceholder">Awaiting analysis</div>
         </div>
         <p class="caption">Model focus visualization</p>
-        <p class="caption">Shows which regions influenced the AI's decision</p>
-        <p class="caption">Red/yellow = high attention from model</p>
-        <p class="caption">Blue/purple = low attention</p>
       </div>
     </div>
 
@@ -716,6 +789,7 @@
         <button class="tab-btn" onclick="showTab('model-info')">🧠 Model Info</button>
         <button class="tab-btn" onclick="showTab('stats')">📊 Statistics</button>
         <button class="tab-btn" onclick="showTab('feedback')">💬 Feedback</button>
+        <button class="tab-btn" onclick="showTab('recruiters')">💼 For Recruiters</button>
       </div>
 
       <!-- Photo Guidelines Tab -->
@@ -834,26 +908,23 @@
         </div>
       </div>
 
-      <!-- Model Info Tab - WITH TRAINING STORY -->
+      <!-- Model Info Tab -->
       <div id="model-info" class="tab-content">
         <h2 style="color: #495057; margin-bottom: 2rem; text-align: center;">🧠 Model Information & Training Journey</h2>
         
-        <!-- Training Story Section -->
         <div class="info-card" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; margin-bottom: 2rem;">
           <h3 style="color: white;">🚀 The Development Journey</h3>
           <p style="color: white; line-height: 1.8; margin-bottom: 0;">
             This model represents <strong>months of iterative development</strong> and rigorous evaluation. 
             The training process involved <strong>approximately 2 hours of GPU computation</strong> across 70 epochs, 
             processing over <strong>10,000 dermoscopy images</strong>. Multiple training sessions were conducted 
-            to optimize hyperparameters, attention mechanisms, and preprocessing pipelines to achieve 
-            reliable performance for educational demonstration.
+            to optimize hyperparameters, attention mechanisms, and preprocessing pipelines.
           </p>
         </div>
 
-        <!-- Architecture Details -->
         <div class="info-grid">
           <div class="info-card">
-            <h3><span class="icon">🏗️</span> Architecture</h3>
+            <h3><span class="icon">🗂️</span> Architecture</h3>
             <ul>
               <li><strong>Base Model:</strong> EfficientNetV2-B3</li>
               <li><strong>Pretrained:</strong> ImageNet weights</li>
@@ -1106,8 +1177,13 @@
           </div>
         </div>
 
+        <div class="privacy-badge" style="display: flex; margin: 2rem auto; width: fit-content;">
+          <span class="privacy-icon">🔒</span>
+          <span>Your images are analyzed in memory only — never stored or saved</span>
+        </div>
+
         <div class="info-card" style="margin-top: 2rem;">
-          <h3><span class="icon">🌍</span> Data Collection</h3>
+          <h3><span class="icon">🌐</span> Data Collection</h3>
           <p style="color: #6c757d; text-align: center; margin-top: 1rem;">
             Statistics are collected anonymously through Google Analytics and stored securely. 
             Real-time analytics help improve the educational experience for all users.
@@ -1116,7 +1192,7 @@
 
         <div class="info-card" style="margin-top: 1rem; text-align: center;">
           <p style="color: #495057;">
-            📝 <strong>Privacy Note:</strong> No personal information or uploaded images are stored. 
+            🔐 <strong>Privacy Note:</strong> No personal information or uploaded images are stored. 
             Only anonymous usage statistics (page views, analysis count) are tracked for educational purposes.
           </p>
         </div>
@@ -1180,6 +1256,64 @@
             <li><strong>Educational Value:</strong> Did you learn something about AI and medical imaging?</li>
           </ul>
         </div>
+
+        <div id="testimonialsContainer" class="testimonials-carousel" style="margin-top: 2rem;">
+          <h3 style="text-align: center; color: #495057; margin-bottom: 1.5rem;">💬 What Users Are Saying</h3>
+          <div id="testimonialsContent">
+            <p style="text-align: center; color: #6c757d; padding: 2rem;">Loading testimonials...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- For Recruiters Tab -->
+      <div id="recruiters" class="tab-content">
+        <h2 style="color: #495057; margin-bottom: 2rem; text-align: center;">💼 For Recruiters & Hiring Managers</h2>
+        
+        <div class="recruiter-note">
+          <h3>🚀 End-to-End ML Deployment Demonstration</h3>
+          <p style="color: white; line-height: 1.8; margin-bottom: 1rem;">
+            This project demonstrates my ability to deliver a complete machine learning solution, from research and model training, to production deployment and analytics integration:
+          </p>
+          <ul>
+            <li><strong>Deep Learning Architecture:</strong> Custom EfficientNetV2-B3 with spatial attention mechanisms for lesion-focused classification</li>
+            <li><strong>Computer Vision Pipeline:</strong> Advanced preprocessing including morphological hair removal, CLAHE contrast enhancement, and color normalization</li>
+            <li><strong>Explainable AI:</strong> Grad-CAM (Gradient-weighted Class Activation Mapping) for transparent model decision visualization</li>
+            <li><strong>Full-Stack Development:</strong> Python backend (FastAPI/Flask) with responsive HTML/CSS/JavaScript frontend</li>
+            <li><strong>Cloud Deployment:</strong> Production deployment on Hugging Face Spaces with automated CI/CD pipeline</li>
+            <li><strong>Analytics Integration:</strong> Google Analytics for user tracking + Google Sheets API for real-time statistics and feedback collection</li>
+            <li><strong>Clinical Validation:</strong> Rigorous evaluation against medical safety thresholds (92.1% sensitivity, 83.9% accuracy, 0.926 AUC-ROC)</li>
+            <li><strong>Model Training:</strong> Two-phase transfer learning with data augmentation, regularization, and hyperparameter optimization</li>
+            <li><strong>Documentation:</strong> Comprehensive technical documentation, model cards, and user guidelines</li>
+            <li><strong>Responsible AI:</strong> Clear disclaimers, privacy safeguards (no data storage), and educational purpose emphasis</li>
+          </ul>
+          <p style="color: white; margin-top: 1.5rem; opacity: 0.95;">
+            📂 <strong>Technical Stack:</strong> Python, TensorFlow/Keras, OpenCV, NumPy, Pandas, FastAPI, HTML/CSS/JavaScript, Git, Hugging Face, Google Cloud APIs
+          </p>
+          <p style="color: white; margin-top: 1rem; opacity: 0.95;">
+            📊 <strong>Metrics:</strong> 10,000+ images processed • 70 training epochs • ~2 hours GPU time each training session • 14M parameters
+          </p>
+        </div>
+
+        <div class="info-card" style="margin-top: 2rem; background: #f8f9fa; border-left: 4px solid #764ba2;">
+          <h3 style="color: #495057;">🎯 Key Achievements</h3>
+          <ul>
+            <li>Built and deployed a production-ready AI application end-to-end</li>
+            <li>Exceeded all clinical safety thresholds for educational deployment</li>
+            <li>Implemented explainable AI to ensure model transparency</li>
+            <li>Created responsive, user-friendly interface with real-time analytics</li>
+            <li>Demonstrated responsible AI practices with clear limitations and disclaimers</li>
+          </ul>
+        </div>
+
+        <div class="info-card" style="margin-top: 1.5rem; background: #fff3cd; border-left: 4px solid #ffc107;">
+          <h3 style="color: #856404;">📧 Let's Connect</h3>
+          <p style="color: #856404; line-height: 1.8;">
+            Interested in discussing this project or potential opportunities? Feel free to reach out via 
+            <a href="https://www.linkedin.com/in/horatiu-crista" target="_blank" style="color: #667eea; font-weight: 600;">LinkedIn</a> 
+            or explore more projects on my 
+            <a href="https://huggingface.co/horatiu-crista" target="_blank" style="color: #667eea; font-weight: 600;">Hugging Face profile</a>.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -1201,11 +1335,8 @@
     
   <script>
     const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
-    
-    // ⚠️ REPLACE THIS WITH YOUR GOOGLE SHEETS WEB APP URL
     const STATS_API = 'https://script.google.com/macros/s/AKfycbzMUD5ajT_225v8RFyIiD9_kYHAU7iR64SptM1HvR5clzV228i9Db2KCTckG6jpQlbgjg/exec';
     
-    // Fallback to localStorage if Google Sheets not configured
     let stats = {
       visits: parseInt(localStorage.getItem('totalVisits') || '0'),
       analyses: parseInt(localStorage.getItem('totalAnalyses') || '0'),
@@ -1213,15 +1344,73 @@
       confidenceCount: parseInt(localStorage.getItem('confidenceCount') || '0')
     };
 
-    // Load persistent stats from Google Sheets
-    async function loadStats() {
-      // Check if Google Sheets is configured
-      if (STATS_API === 'https://script.google.com/macros/s/AKfycbzYaXNGZE2Qj7kqYP99il0qnZ3wJr_ym3pvjoS-mC7XdVaBNnPJiofc5ObIoTUXTmLO5g/exec') {
-        // Fallback to localStorage
-        updateStatsDisplay();
-        return;
+    // Load testimonials from Google Sheets
+    async function loadTestimonials() {
+      try {
+        const response = await fetch(STATS_API + '?action=get_testimonials');
+        const data = await response.json();
+        
+        if (data.testimonials && data.testimonials.length > 0) {
+          displayTestimonials(data.testimonials);
+        } else {
+          // Fallback message if no testimonials
+          document.getElementById('testimonialsContent').innerHTML = 
+            '<p style="text-align: center; color: #6c757d; padding: 2rem;">No testimonials yet. Be the first to share your feedback!</p>';
+        }
+      } catch (error) {
+        console.error('Failed to load testimonials:', error);
+        document.getElementById('testimonialsContent').innerHTML = 
+          '<p style="text-align: center; color: #6c757d; padding: 2rem;">Testimonials loading failed. Check back later!</p>';
       }
+    }
 
+    function displayTestimonials(testimonials) {
+      const container = document.getElementById('testimonialsContent');
+      
+      // Create slides
+      let slidesHTML = '';
+      testimonials.forEach((item, index) => {
+        slidesHTML += `
+          <div class="testimonial-slide ${index === 0 ? 'active' : ''}">
+            <p class="testimonial-text">"${item.message}"</p>
+            <p class="testimonial-author">— ${item.name || 'Anonymous User'}</p>
+          </div>
+        `;
+      });
+      
+      // Create dots
+      let dotsHTML = '<div class="carousel-dots">';
+      testimonials.forEach((_, index) => {
+        dotsHTML += `<span class="carousel-dot ${index === 0 ? 'active' : ''}" onclick="showTestimonial(${index})"></span>`;
+      });
+      dotsHTML += '</div>';
+      
+      container.innerHTML = slidesHTML + dotsHTML;
+      
+      // Auto-rotate testimonials
+      if (testimonials.length > 1) {
+        let currentIndex = 0;
+        setInterval(() => {
+          currentIndex = (currentIndex + 1) % testimonials.length;
+          showTestimonial(currentIndex);
+        }, 6000);
+      }
+    }
+
+    function showTestimonial(index) {
+      const slides = document.querySelectorAll('.testimonial-slide');
+      const dots = document.querySelectorAll('.carousel-dot');
+      
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('active', i === index);
+      });
+      
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    async function loadStats() {
       try {
         const response = await fetch(STATS_API);
         const data = await response.json();
@@ -1230,20 +1419,40 @@
         document.getElementById('totalAnalyses').textContent = data.analyses.toLocaleString();
         document.getElementById('avgConfidence').textContent = 
           data.avgConfidence > 0 ? (data.avgConfidence * 100).toFixed(1) + '%' : '-';
+        
+        updateProgressBars(data.visits, data.analyses, data.avgConfidence);
       } catch (error) {
         console.error('Failed to load stats:', error);
-        // Fallback to localStorage
         updateStatsDisplay();
       }
     }
 
-    // Track events to Google Sheets
-    async function trackEvent(eventType, data = {}) {
-      // Check if Google Sheets is configured
-      if (STATS_API === 'https://script.google.com/macros/s/AKfycbzYaXNGZE2Qj7kqYP99il0qnZ3wJr_ym3pvjoS-mC7XdVaBNnPJiofc5ObIoTUXTmLO5g/exec') {
-        return; // Skip tracking if not configured
+    function updateStatsDisplay() {
+      document.getElementById('totalVisitors').textContent = stats.visits.toLocaleString();
+      document.getElementById('totalAnalyses').textContent = stats.analyses.toLocaleString();
+      
+      if (stats.confidenceCount > 0) {
+        const avgConf = ((stats.confidenceSum / stats.confidenceCount) * 100).toFixed(1);
+        document.getElementById('avgConfidence').textContent = avgConf + '%';
+        updateProgressBars(stats.visits, stats.analyses, stats.confidenceSum / stats.confidenceCount);
+      } else {
+        document.getElementById('avgConfidence').textContent = '-';
+        updateProgressBars(stats.visits, stats.analyses, 0);
       }
+    }
 
+    function updateProgressBars(visits, analyses, avgConf) {
+      setTimeout(() => {
+        const statBoxes = document.querySelectorAll('.stat-box');
+        if (statBoxes.length >= 3) {
+          statBoxes[0].style.setProperty('--progress', Math.min(visits / 2, 100) + '%');
+          statBoxes[1].style.setProperty('--progress', Math.min(analyses / 1, 100) + '%');
+          statBoxes[2].style.setProperty('--progress', (avgConf * 100) + '%');
+        }
+      }, 100);
+    }
+
+    async function trackEvent(eventType, data = {}) {
       try {
         await fetch(STATS_API, {
           method: 'POST',
@@ -1257,32 +1466,12 @@
       }
     }
 
-    // Update statistics display (localStorage fallback)
-    function updateStatsDisplay() {
-      document.getElementById('totalVisitors').textContent = stats.visits.toLocaleString();
-      document.getElementById('totalAnalyses').textContent = stats.analyses.toLocaleString();
-      
-      if (stats.confidenceCount > 0) {
-        const avgConf = ((stats.confidenceSum / stats.confidenceCount) * 100).toFixed(1);
-        document.getElementById('avgConfidence').textContent = avgConf + '%';
-      } else {
-        document.getElementById('avgConfidence').textContent = '-';
-      }
-    }
-
-    // Track page view
     stats.visits++;
     localStorage.setItem('totalVisits', stats.visits);
     loadStats();
+    loadTestimonials();
     trackEvent('page_view');
-    
-    // Send page view to Google Analytics
-    gtag('event', 'page_view', {
-      page_title: 'CheckYourMole Homepage',
-      page_location: window.location.href
-    });
 
-    // Tab switching
     function showTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1291,7 +1480,6 @@
       event.target.classList.add('active');
     }
 
-    // Image analysis
     async function analyzeImage(imageFile) {
       try {
         const formData = new FormData();
@@ -1314,7 +1502,6 @@
           throw new Error(result.error || 'Analysis failed');
         }
         
-        // Update statistics
         stats.analyses++;
         stats.confidenceSum += result.confidence;
         stats.confidenceCount++;
@@ -1323,6 +1510,10 @@
         localStorage.setItem('confidenceCount', stats.confidenceCount);
         
         displayResults(result);
+        trackEvent('analyze_image', {
+          prediction: result.prediction,
+          confidence: result.confidence
+        });
 
       } catch (error) {
         showLoading(false);
@@ -1338,25 +1529,7 @@
       const diagnosisLabel = document.getElementById('diagnosisLabel');
       const confidenceValue = document.getElementById('confidenceValue');
       const resultCard = document.getElementById('resultCard');
-      
-      // Track analysis event
-      trackEvent('analyze_image', {
-        prediction: result.prediction,
-        confidence: result.confidence
-      });
-      
-      // Reload stats after tracking
-      setTimeout(loadStats, 1000);
-      
-      // Track in Google Analytics
-      gtag('event', 'analyze_image', {
-        prediction: result.prediction,
-        confidence: (result.confidence * 100).toFixed(1),
-        event_category: 'Analysis',
-        event_label: result.prediction === 'malignant' ? 'Malignant' : 'Benign'
-      });
 
-      // Show preprocessed image in middle box
       const preprocessedImage = document.getElementById('preprocessedImage');
       const preprocessedPlaceholder = document.getElementById('preprocessedPlaceholder');
       
@@ -1368,7 +1541,6 @@
         preprocessedImage.style.display = 'block';
       }
 
-      // Show Grad-CAM in third box
       const gradcamImage = document.getElementById('gradcamImage');
       const gradcamPlaceholder = document.getElementById('gradcamPlaceholder');
       
@@ -1380,7 +1552,6 @@
         gradcamImage.src = result.gradcam_overlay;
       }
 
-      // Update result card
       const isMalignant = result.prediction === 'malignant';
       const labelText = isMalignant ? 'Malignant' : 'Benign';
       const confidencePercent = (result.confidence * 100).toFixed(1);
@@ -1389,7 +1560,6 @@
       confidenceValue.textContent = `Confidence: ${confidencePercent}%`;
       resultCard.className = `result-card ${isMalignant ? 'malignant' : 'benign'} active`;
 
-      // Scroll to results
       setTimeout(() => {
         resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
@@ -1410,7 +1580,6 @@
       }
     }
 
-    // Feedback form submission
     async function submitFeedback(event) {
       event.preventDefault();
       
@@ -1421,26 +1590,6 @@
         category: document.getElementById('feedbackCategory').value,
         message: document.getElementById('feedbackMessage').value
       };
-
-      // Check if Google Sheets is configured
-      if (STATS_API === 'https://script.google.com/macros/s/AKfycbzYaXNGZE2Qj7kqYP99il0qnZ3wJr_ym3pvjoS-mC7XdVaBNnPJiofc5ObIoTUXTmLO5g/exec') {
-        // Fallback: Store locally
-        let feedbackList = JSON.parse(localStorage.getItem('feedbackList') || '[]');
-        feedbackList.push({...feedback, timestamp: new Date().toISOString()});
-        localStorage.setItem('feedbackList', JSON.stringify(feedbackList));
-        
-        document.getElementById('feedbackForm').style.display = 'none';
-        document.getElementById('feedbackSuccess').style.display = 'block';
-        
-        setTimeout(() => {
-          document.getElementById('feedbackForm').reset();
-          document.getElementById('feedbackForm').style.display = 'block';
-          document.getElementById('feedbackSuccess').style.display = 'none';
-        }, 3000);
-        
-        console.log('Feedback stored locally:', feedback);
-        return;
-      }
 
       try {
         const response = await fetch(STATS_API, {
@@ -1466,7 +1615,6 @@
       }
     }
 
-    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       const analyzeBtn = document.getElementById('analyzeBtn');
       const fileInput = document.getElementById('file-upload');
@@ -1499,7 +1647,6 @@
 
         selectedFile = file;
         
-        // Show original image (user's upload)
         const imageUrl = URL.createObjectURL(file);
         originalImage.onload = () => {
           originalPlaceholder.style.display = 'none';
@@ -1507,7 +1654,6 @@
         originalImage.src = imageUrl;
         originalImage.style.display = 'block';
         
-        // Reset preprocessed and Grad-CAM boxes
         preprocessedImage.src = '';
         preprocessedImage.style.display = 'none';
         preprocessedPlaceholder.style.display = 'flex';
