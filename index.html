@@ -1,16 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
   <title>CheckYourMole – Free AI Mole Classifier | Educational Demo</title>
   
+  <!-- ✅ IMPROVED SEO META TAGS -->
   <meta name="description" content="Free AI-powered mole classification tool using EfficientNetV2 and Grad-CAM. Upload dermoscopy images for instant benign/malignant analysis. Educational deep learning demo." />
   <meta name="keywords" content="AI mole classifier, skin lesion analysis, melanoma detection, deep learning, EfficientNet, Grad-CAM, dermoscopy, machine learning healthcare" />
   <meta name="author" content="Horatiu Crista" />
   <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://h0r4c3.github.io/checkyourmole-site/" />
   
+  <!-- Open Graph (for social media sharing) -->
+  <meta property="og:title" content="CheckYourMole - AI Mole Classification Demo" />
+  <meta property="og:description" content="Free AI tool for educational mole analysis using deep learning. Upload images to see how AI classifies skin lesions." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://h0r4c3.github.io/checkyourmole-site/" />
+  <meta property="og:image" content="https://h0r4c3.github.io/checkyourmole-site/preview.png" />
+  <meta property="og:site_name" content="CheckYourMole" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CheckYourMole - AI Mole Classifier" />
+  <meta name="twitter:description" content="Free educational AI tool for skin lesion analysis" />
+  <meta name="twitter:image" content="https://h0r4c3.github.io/checkyourmole-site/preview.png" />
+
+  <!-- Theme color -->
+  <meta name="theme-color" content="#667eea" />
+
+  <!-- Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+
+  <!-- Google Analytics tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-TXR97132L9"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-TXR97132L9');
+  </script>
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "CheckYourMole",
+    "url": "https://h0r4c3.github.io/checkyourmole-site/",
+    "applicationCategory": "HealthApplication",
+    "operatingSystem": "All",
+    "softwareVersion": "1.0.0",
+    "creator": {
+      "@type": "Person",
+      "name": "Horatiu Crista",
+      "url": "https://www.linkedin.com/in/horatiu-crista/"
+    },
+    "image": "https://h0r4c3.github.io/checkyourmole-site/preview.png",
+    "license": "https://opensource.org/licenses/MIT",
+    "description": "AI-powered mole classification demo using deep learning and Grad-CAM visualization. Educational only – not a medical diagnosis.",
+    "keywords": ["AI", "mole classification", "skin lesion", "deep learning", "educational demo"]
+  }
+  </script>
 
   <style>
     * {
@@ -762,6 +815,9 @@
           <div class="placeholder-text" id="gradcamPlaceholder">Awaiting analysis</div>
         </div>
         <p class="caption">Model focus visualization</p>
+        <p class="caption">Shows which regions influenced the AI's decision</p>
+        <p class="caption">Red/yellow = high attention from model</p>
+        <p class="caption">Blue/purple = low attention</p>
       </div>
     </div>
 
@@ -916,12 +972,13 @@
           <h3 style="color: white;">🚀 The Development Journey</h3>
           <p style="color: white; line-height: 1.8; margin-bottom: 0;">
             This model represents <strong>months of iterative development</strong> and rigorous evaluation. 
-            The training process involved <strong>approximately 2 hours of GPU computation</strong> across 70 epochs, 
+            Each training session involved <strong>approximately 2 hours of GPU computation</strong> across 70 epochs, 
             processing over <strong>10,000 dermoscopy images</strong>. Multiple training sessions were conducted 
             to optimize hyperparameters, attention mechanisms, and preprocessing pipelines.
           </p>
         </div>
 
+        <!-- Architecture Details -->
         <div class="info-grid">
           <div class="info-card">
             <h3><span class="icon">🗂️</span> Architecture</h3>
@@ -1335,8 +1392,11 @@
     
   <script>
     const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
+    
+    // ⚠️ REPLACE THIS WITH YOUR GOOGLE SHEETS WEB APP URL
     const STATS_API = 'https://script.google.com/macros/s/AKfycbzMUD5ajT_225v8RFyIiD9_kYHAU7iR64SptM1HvR5clzV228i9Db2KCTckG6jpQlbgjg/exec';
     
+    // Fallback to localStorage if Google Sheets not configured
     let stats = {
       visits: parseInt(localStorage.getItem('totalVisits') || '0'),
       analyses: parseInt(localStorage.getItem('totalAnalyses') || '0'),
@@ -1423,6 +1483,7 @@
         updateProgressBars(data.visits, data.analyses, data.avgConfidence);
       } catch (error) {
         console.error('Failed to load stats:', error);
+        // Fallback to localStorage
         updateStatsDisplay();
       }
     }
@@ -1466,12 +1527,33 @@
       }
     }
 
+    // Update statistics display (localStorage fallback)
+    function updateStatsDisplay() {
+      document.getElementById('totalVisitors').textContent = stats.visits.toLocaleString();
+      document.getElementById('totalAnalyses').textContent = stats.analyses.toLocaleString();
+      
+      if (stats.confidenceCount > 0) {
+        const avgConf = ((stats.confidenceSum / stats.confidenceCount) * 100).toFixed(1);
+        document.getElementById('avgConfidence').textContent = avgConf + '%';
+      } else {
+        document.getElementById('avgConfidence').textContent = '-';
+      }
+    }
+
+    // Track page view
     stats.visits++;
     localStorage.setItem('totalVisits', stats.visits);
     loadStats();
     loadTestimonials();
     trackEvent('page_view');
 
+    // Send page view to Google Analytics
+    gtag('event', 'page_view', {
+      page_title: 'CheckYourMole Homepage',
+      page_location: window.location.href
+    });
+
+    // Tab switching
     function showTab(tabName) {
       document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -1480,6 +1562,7 @@
       event.target.classList.add('active');
     }
 
+    // Image analysis
     async function analyzeImage(imageFile) {
       try {
         const formData = new FormData();
@@ -1502,6 +1585,7 @@
           throw new Error(result.error || 'Analysis failed');
         }
         
+        // Update statistics
         stats.analyses++;
         stats.confidenceSum += result.confidence;
         stats.confidenceCount++;
@@ -1530,6 +1614,24 @@
       const confidenceValue = document.getElementById('confidenceValue');
       const resultCard = document.getElementById('resultCard');
 
+      // Track analysis event
+      trackEvent('analyze_image', {
+        prediction: result.prediction,
+        confidence: result.confidence
+      });
+      
+      // Reload stats after tracking
+      setTimeout(loadStats, 1000);
+      
+      // Track in Google Analytics
+      gtag('event', 'analyze_image', {
+        prediction: result.prediction,
+        confidence: (result.confidence * 100).toFixed(1),
+        event_category: 'Analysis',
+        event_label: result.prediction === 'malignant' ? 'Malignant' : 'Benign'
+      });
+
+      // Show preprocessed image in middle box
       const preprocessedImage = document.getElementById('preprocessedImage');
       const preprocessedPlaceholder = document.getElementById('preprocessedPlaceholder');
       
@@ -1541,6 +1643,7 @@
         preprocessedImage.style.display = 'block';
       }
 
+      // Show Grad-CAM in third box
       const gradcamImage = document.getElementById('gradcamImage');
       const gradcamPlaceholder = document.getElementById('gradcamPlaceholder');
       
@@ -1552,6 +1655,7 @@
         gradcamImage.src = result.gradcam_overlay;
       }
 
+      // Update result card
       const isMalignant = result.prediction === 'malignant';
       const labelText = isMalignant ? 'Malignant' : 'Benign';
       const confidencePercent = (result.confidence * 100).toFixed(1);
@@ -1560,6 +1664,7 @@
       confidenceValue.textContent = `Confidence: ${confidencePercent}%`;
       resultCard.className = `result-card ${isMalignant ? 'malignant' : 'benign'} active`;
 
+      // Scroll to results
       setTimeout(() => {
         resultCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }, 100);
@@ -1580,6 +1685,7 @@
       }
     }
 
+    // Feedback form submission
     async function submitFeedback(event) {
       event.preventDefault();
       
@@ -1590,6 +1696,26 @@
         category: document.getElementById('feedbackCategory').value,
         message: document.getElementById('feedbackMessage').value
       };
+
+      // Check if Google Sheets is configured
+      if (STATS_API === 'https://script.google.com/macros/s/AKfycbzYaXNGZE2Qj7kqYP99il0qnZ3wJr_ym3pvjoS-mC7XdVaBNnPJiofc5ObIoTUXTmLO5g/exec') {
+        // Fallback: Store locally
+        let feedbackList = JSON.parse(localStorage.getItem('feedbackList') || '[]');
+        feedbackList.push({...feedback, timestamp: new Date().toISOString()});
+        localStorage.setItem('feedbackList', JSON.stringify(feedbackList));
+        
+        document.getElementById('feedbackForm').style.display = 'none';
+        document.getElementById('feedbackSuccess').style.display = 'block';
+        
+        setTimeout(() => {
+          document.getElementById('feedbackForm').reset();
+          document.getElementById('feedbackForm').style.display = 'block';
+          document.getElementById('feedbackSuccess').style.display = 'none';
+        }, 3000);
+        
+        console.log('Feedback stored locally:', feedback);
+        return;
+      }
 
       try {
         const response = await fetch(STATS_API, {
@@ -1615,6 +1741,7 @@
       }
     }
 
+    // Initialize
     document.addEventListener('DOMContentLoaded', () => {
       const analyzeBtn = document.getElementById('analyzeBtn');
       const fileInput = document.getElementById('file-upload');
@@ -1647,6 +1774,7 @@
 
         selectedFile = file;
         
+        // Show original image (user's upload)
         const imageUrl = URL.createObjectURL(file);
         originalImage.onload = () => {
           originalPlaceholder.style.display = 'none';
@@ -1654,6 +1782,7 @@
         originalImage.src = imageUrl;
         originalImage.style.display = 'block';
         
+        // Reset preprocessed and Grad-CAM boxes
         preprocessedImage.src = '';
         preprocessedImage.style.display = 'none';
         preprocessedPlaceholder.style.display = 'flex';
