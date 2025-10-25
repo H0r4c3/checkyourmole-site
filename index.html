@@ -1618,11 +1618,13 @@
       const confidenceValue = document.getElementById('confidenceValue');
       const resultCard = document.getElementById('resultCard');
 
+      /*
       // Track analysis event
       trackEvent('analyze_image', {
         prediction: result.prediction,
         confidence: result.confidence
       });
+      */
       
       // Reload stats after tracking
       setTimeout(loadStats, 1000);
@@ -1819,32 +1821,24 @@
     });
   </script>
 
-  <!-- Geolocation script -->
-  <script>
-    async function getUserCountry() {
-      try {
-        const res = await fetch("https://ipapi.co/json/");
-        const data = await res.json();
-        // Save country in a global variable or hidden input
-        window.userCountry = data.country_name || "Unknown";
-        console.log("Detected country:", window.userCountry);
-      } catch (err) {
-        console.error("Geo lookup failed:", err);
-        window.userCountry = "Unknown";
-      }
-    }
+  <!-- 🌍 Geolocation script -->
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    window.userCountry = data.country_name || "Unknown";
+    console.log("🌍 Detected country:", window.userCountry);
 
-    // Run on load
-    document.addEventListener("DOMContentLoaded", async () => {
-      try {
-        const res = await fetch("https://ipapi.co/json/");
-        const data = await res.json();
-        document.getElementById("countryField").value = data.country_name || "Unknown";
-      } catch (err) {
-        document.getElementById("countryField").value = "Unknown";
-      }
-    });
-  </script>
+    // If you still have a hidden field for Sheets, update it too
+    const countryField = document.getElementById("countryField");
+    if (countryField) countryField.value = window.userCountry;
+  } catch (err) {
+    console.error("🌍 Geo lookup failed:", err);
+    window.userCountry = "Unknown";
+  }
+});
+</script>
 
 </body>
 </html>
