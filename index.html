@@ -1822,23 +1822,24 @@
   </script>
 
   <!-- 🌍 Geolocation script -->
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
-  try {
-    const res = await fetch("https://ipapi.co/json/");
-    const data = await res.json();
-    window.userCountry = data.country_name || "Unknown";
-    console.log("🌍 Detected country:", window.userCountry);
+  <script>
+  document.addEventListener("DOMContentLoaded", async () => {
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+      window.userCountry = data.country_name || "Unknown";
+      console.log("🌍 Detected country:", window.userCountry);
 
-    // If you still have a hidden field for Sheets, update it too
-    const countryField = document.getElementById("countryField");
-    if (countryField) countryField.value = window.userCountry;
-  } catch (err) {
-    console.error("🌍 Geo lookup failed:", err);
-    window.userCountry = "Unknown";
-  }
-});
-</script>
+      // If you still have a hidden field for Sheets, update it too
+      const countryField = document.getElementById("countryField");
+
+      if (countryField) countryField.value = window.userCountry;
+    } catch (err) {
+      console.error("🌍 Geo lookup failed:", err);
+      window.userCountry = "Unknown";
+    }
+  });
+  </script>
 
 </body>
 </html>
