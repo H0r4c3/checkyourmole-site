@@ -1295,6 +1295,9 @@
               </label>
             </div>
 
+            <!-- 👇 Hidden input goes here -->
+            <input type="hidden" id="countryField" name="country" value="" />
+            
             <button type="submit" class="submit-btn">Submit Feedback</button>
           </form>
           
@@ -1596,7 +1599,8 @@
         displayResults(result);
         trackEvent('analyze_image', {
           prediction: result.prediction,
-          confidence: result.confidence
+          confidence: result.confidence,
+          country: window.userCountry || "Unknown"
         });
 
       } catch (error) {
@@ -1694,7 +1698,8 @@
         name: document.getElementById('feedbackName').value,
         email: document.getElementById('feedbackEmail').value,
         category: document.getElementById('feedbackCategory').value,
-        message: document.getElementById('feedbackMessage').value
+        message: document.getElementById('feedbackMessage').value,
+        country: document.getElementById("countryField").value || "Unknown"
       };
 
       // Check if Google Sheets is configured
@@ -1811,6 +1816,33 @@
         gradcamPlaceholder.textContent = 'Error loading heatmap';
         gradcamImage.style.display = 'none';
       });
+    });
+  </script>
+
+  <!-- Geolocation script -->
+  <script>
+    async function getUserCountry() {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        // Save country in a global variable or hidden input
+        window.userCountry = data.country_name || "Unknown";
+        console.log("Detected country:", window.userCountry);
+      } catch (err) {
+        console.error("Geo lookup failed:", err);
+        window.userCountry = "Unknown";
+      }
+    }
+
+    // Run on load
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        document.getElementById("countryField").value = data.country_name || "Unknown";
+      } catch (err) {
+        document.getElementById("countryField").value = "Unknown";
+      }
     });
   </script>
 
