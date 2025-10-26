@@ -1709,8 +1709,8 @@
         email: document.getElementById('feedbackEmail').value,
         category: document.getElementById('feedbackCategory').value,
         message: document.getElementById('feedbackMessage').value,
-        //country: window.userCountry || "Unknown" // ✅ Use window.userCountry directly
-        country: "TEST_COUNTRY_HARDCODED"  // ✅ Hardcoded test value
+        country: window.userCountry || "Unknown" // ✅ Use window.userCountry directly
+        //country: "TEST_COUNTRY_HARDCODED"  // ✅ Hardcoded test value
       };
 
 
