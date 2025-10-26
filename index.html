@@ -1737,6 +1737,7 @@
       try {
         const response = await fetch(STATS_API, {
           method: 'POST',
+          mode: "no-cors", // ✅ bypass CORS protection
           headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(feedback)
         });
