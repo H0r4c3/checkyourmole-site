@@ -1399,7 +1399,7 @@
     const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
     
     // ⚠️ REPLACE THIS WITH YOUR GOOGLE SHEETS WEB APP URL
-    const STATS_API = 'https://script.google.com/macros/s/AKfycbzMUD5ajT_225v8RFyIiD9_kYHAU7iR64SptM1HvR5clzV228i9Db2KCTckG6jpQlbgjg/exec';
+    const STATS_API = 'https://script.google.com/macros/s/AKfycbyBG_IXhlmXuIbiNWGzPZfOfYFTzJD5BSlB3KJri49QCq8Ba5PeAYI0jGZb2g0oJ6kaww/exec';
     
     // ✅ Initialize immediately
     window.userCountry = "Unknown";
@@ -1523,8 +1523,11 @@
 
     async function trackEvent(eventType, data = {}) {
       try {
+        console.log("📤 Event sent:", eventType, data);
         await fetch(STATS_API, {
           method: 'POST',
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             event_type: eventType,
             ...data
