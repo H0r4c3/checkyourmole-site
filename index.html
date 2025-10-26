@@ -6,6 +6,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
   <title>CheckYourMole – Free AI Mole Classifier | Educational Demo</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔬</text></svg>">
   
   <!-- ✅ IMPROVED SEO META TAGS -->
   <meta name="description" content="Free AI-powered mole classification tool using EfficientNetV2 and Grad-CAM. Upload dermoscopy images for instant benign/malignant analysis. Educational deep learning demo." />
@@ -1428,7 +1431,8 @@
       } catch (error) {
         console.error('Failed to load testimonials:', error);
         document.getElementById('testimonialsContent').innerHTML = 
-          '<p style="text-align: center; color: #6c757d; padding: 2rem;">Testimonials loading failed. Check back later!</p>';
+          //'<p style="text-align: center; color: #6c757d; padding: 2rem;">Testimonials loading failed. Check back later!</p>';
+          '<p style="text-align: center; color: #6c757d; padding: 2rem;">Testimonials saved only in Google Sheets. Thank you!</p>';
       }
     }
 
