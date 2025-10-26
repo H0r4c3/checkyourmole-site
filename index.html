@@ -1706,8 +1706,16 @@
         email: document.getElementById('feedbackEmail').value,
         category: document.getElementById('feedbackCategory').value,
         message: document.getElementById('feedbackMessage').value,
-        country: window.userCountry || "Unknown" // ✅ Use window.userCountry directly
+        //country: window.userCountry || "Unknown" // ✅ Use window.userCountry directly
+        country: "TEST_COUNTRY_HARDCODED"  // ✅ Hardcoded test value
       };
+
+      
+
+
+
+
+
 
       // Check if Google Sheets is configured
       if (STATS_API === 'https://script.google.com/macros/s/AKfycbzYaXNGZE2Qj7kqYP99il0qnZ3wJr_ym3pvjoS-mC7XdVaBNnPJiofc5ObIoTUXTmLO5g/exec') {
