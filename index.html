@@ -1710,12 +1710,6 @@
         country: "TEST_COUNTRY_HARDCODED"  // ✅ Hardcoded test value
       };
 
-      
-
-
-
-
-
 
       // Check if Google Sheets is configured
       if (STATS_API === 'https://script.google.com/macros/s/AKfycbzYaXNGZE2Qj7kqYP99il0qnZ3wJr_ym3pvjoS-mC7XdVaBNnPJiofc5ObIoTUXTmLO5g/exec') {
@@ -1740,6 +1734,7 @@
       try {
         const response = await fetch(STATS_API, {
           method: 'POST',
+          headers: {'Content-Type': 'application/json'},
           body: JSON.stringify(feedback)
         });
         
