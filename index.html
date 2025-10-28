@@ -1397,7 +1397,27 @@
       </p>
     </div>
   </footer>
-    
+
+  <!-- 🌐 Geolocation script - runs immediately -->
+  <script>
+  (async () => {
+    try {
+      const res = await fetch("https://ipapi.co/json/");
+      const data = await res.json();
+      window.userCountry = data.country_name || "Unknown";
+      console.log("🌐 Detected country:", window.userCountry);
+      
+      const countryField = document.getElementById("countryField");
+      if (countryField) countryField.value = window.userCountry;
+    } catch (err) {
+      console.error("🌐 Geo lookup failed:", err);
+      window.userCountry = "Unknown";
+    }
+  })();
+  </script>
+  
+
+
   <script>
     const API_URL = 'https://horatiu-crista-checkyourmole-api.hf.space/analyze';
     
@@ -1555,18 +1575,39 @@
       }
     }
 
-    // Track page view
-    stats.visits++;
-    localStorage.setItem('totalVisits', stats.visits);
-    loadStats();
-    loadTestimonials();
-    trackEvent('page_view');
-
-    // Send page view to Google Analytics
-    gtag('event', 'page_view', {
-      page_title: 'CheckYourMole Homepage',
-      page_location: window.location.href
-    });
+    // 🌍 Fetch country FIRST, then track page view
+    (async function initializeAnalytics() {
+      try {
+        // Detect country
+        const res = await fetch("https://ipapi.co/json/");
+        const data = await res.json();
+        window.userCountry = data.country_name || "Unknown";
+        console.log("🌍 Detected country:", window.userCountry);
+        
+        // Update hidden form field
+        const countryField = document.getElementById("countryField");
+        if (countryField) countryField.value = window.userCountry;
+        
+      } catch (err) {
+        console.error("🌍 Geo lookup failed:", err);
+        window.userCountry = "Unknown";
+      }
+      
+      // NOW track page view with correct country
+      stats.visits++;
+      localStorage.setItem('totalVisits', stats.visits);
+      loadStats();
+      loadTestimonials();
+      
+      trackEvent('page_view', { country: window.userCountry });
+      
+      // Send to Google Analytics
+      gtag('event', 'page_view', {
+        page_title: 'CheckYourMole Homepage',
+        page_location: window.location.href,
+        country: window.userCountry
+      });
+    })();
 
     // Tab switching
     function showTab(tabName) {
@@ -1819,24 +1860,6 @@
 
 
     });
-  </script>
-
-  <!-- 🌐 Geolocation script - runs immediately -->
-  <script>
-  (async () => {
-    try {
-      const res = await fetch("https://ipapi.co/json/");
-      const data = await res.json();
-      window.userCountry = data.country_name || "Unknown";
-      console.log("🌐 Detected country:", window.userCountry);
-      
-      const countryField = document.getElementById("countryField");
-      if (countryField) countryField.value = window.userCountry;
-    } catch (err) {
-      console.error("🌐 Geo lookup failed:", err);
-      window.userCountry = "Unknown";
-    }
-  })();
   </script>
 
 </body>
