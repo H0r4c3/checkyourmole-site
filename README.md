@@ -13,9 +13,10 @@ The uploaded images are securely sent to a **private backend model** hosted on H
 
 ---
 
-## 🌐 Live Demo
-Once deployed, the site will be available at:  
+## 🌐 Free Live Demo
+The site is available at:  
 👉 **https://H0r4c3.github.io/checkyourmole-site**
+![0](https://github.com/user-attachments/assets/e72be58e-9f11-4aa3-89e1-b827585613f2)
 
 ---
 
@@ -34,7 +35,8 @@ Once deployed, the site will be available at:
 
 ---
 
-## 📂 Repository Structure
+## Model Training Summary
+![4](https://github.com/user-attachments/assets/3986ae33-927c-427e-84f7-380745a66752)
 
 ---
 
@@ -59,8 +61,4 @@ Always consult a qualified dermatologist for medical concerns.
 
 ---
 
-## 📌 Next Steps
-- [ ] Connect frontend upload form to Hugging Face backend  
-- [ ] Add Grad-CAM visualization display  
-- [ ] Improve UI/UX with responsive design  
 
