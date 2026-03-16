@@ -792,6 +792,20 @@
       color: #667eea;
       font-size: 1.1rem;
     }
+	
+	.example-photo {
+		width: 100%;
+		border-radius: 8px;
+		margin-bottom: 10px;
+	}
+
+	.bad-photo {
+		border: 4px solid #dc3545; /* red */
+	}
+
+	.good-photo {
+		border: 4px solid #28a745; /* green */
+	}
 
   </style>
 </head>
@@ -930,8 +944,37 @@
               <li>For hairy areas, gently part hair to expose lesion</li>
             </ul>
           </div>
+		  
+		  <!-- Example: Bad Photo -->
+			<div class="info-card">
+			  <h3><span class="icon">❌</span> Bad Example</h3>
+			  <div style="text-align:center;">
+				<img src="Bad_Photo_for_Mole_Classification_.jpeg"
+					 alt="Bad mole photo example"
+					 class="example-photo bad-photo">
+				<p style="font-size:0.9rem; color:#6c757d;">
+				  Watches, jewelry, or other objects in the frame can confuse the AI model and reduce accuracy.
+				</p>
+			  </div>
+			</div>
+
+			<!-- Example: Good Photo -->
+			<div class="info-card">
+			  <h3><span class="icon">✅</span> Good Example</h3>
+			  <div style="text-align:center;">
+				<img src="Good_Photo_for_Mole_Classification_.jpg"
+					 alt="Good mole photo example"
+					 class="example-photo good-photo">
+				<p style="font-size:0.9rem; color:#6c757d;">
+				  The mole fills the frame, is well focused, and there are no distracting objects.
+				</p>
+			  </div>
+			</div>
+		  
         </div>
       </div>
+	  
+			
 
       <!-- How It Works Tab -->
       <div id="how-it-works" class="tab-content">
